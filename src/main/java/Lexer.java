@@ -3,46 +3,80 @@ import java.util.*;
 public class Lexer {
 
     private char[] input;
-    private int currentLine;
     private int currentIndex;
+
+    private List<Token> tokens;
 
     public Lexer(String input) {
         this.input= input.toCharArray();
-        this.currentLine = 1;
         this.currentIndex = -1;
+
+        this.tokens = new ArrayList<>();
     }
 
     public List<Token> processInput() {
-        List<Token> tokens = new ArrayList<>();
-        while (currentIndex < input.length - 1) {
-            String token = readUntilSpace();
+        processInputAsStrings();
+        return this.tokens;
+    }
+
+    private void addToTokenList(String token, int currentLine, boolean isString) {
+        if (!isString) {
             int tokenId = handleToken(token);
-            if (token.length() == 0) {
-                continue;
-            }
-            tokens.add(new Token(currentLine, tokenId, token));
+            this.tokens.add(new Token(currentLine, tokenId, token));
         }
-        return tokens;
+        else {
+            this.tokens.add(new Token(currentLine, 5, token));
+        }
     }
 
     private int handleToken(String token) {
         // This method calls the other handle methods to get tokenId.
-        return 99;
+        int result = handleMultiCharOperators(token);
+        if (result == 99) {
+            result = handleOtherPunctuation(token);
+        }
+        if (result == 99) {
+            result = handlePairedDelimeters(token);
+        }
+        if (result == 99) {
+            result = handleUnpairedDelimeters(token);
+        }
+        if (result == 99) {
+            result = handleKeywords(token);
+        }
+        if (result == 99) {
+            result = handleMiscellaneous(token);
+        }
+        return result;
     }
 
-    public List<String> processInputAsStrings() {
+
+
+    private List<String> processInputAsStrings() { // Returns string tokens, not token objects.
         List<String> strings = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         boolean insideQuote = false;
         boolean checkIfComment = false;
+        int currentLine = 1;
         try {
             while (canPeek()) {
                 String nextCharacter = peek();
-                System.out.println("Checking comment? " + checkIfComment + " Current token: " + nextCharacter);
+                System.out.println("Current token: " + nextCharacter);
+                if (nextCharacter.equals("\0")) {
+                    if (sb.length() != 0) {
+                        addToTokenList(sb.toString(), currentLine, false);
+                        sb.setLength(0);
+                        sb.append(nextCharacter);
+                        addToTokenList(sb.toString(), currentLine, false);
+                        sb.setLength(0);
+                        advance();
+                        continue;
+                    }
+                }
                 if (nextCharacter.equals("\"")) {
                     if (insideQuote) {
                         insideQuote = false;
-                        strings.add(sb.toString());
+                        addToTokenList(sb.toString(), currentLine, true);
                         sb.setLength(0); // Clear the StringBuilder.
                     }
                     else {
@@ -57,6 +91,7 @@ public class Lexer {
                         while (!peek().equals("\n")) {
                             advance();
                         }
+                        currentLine++;
                         advance();
                         continue;
                     }
@@ -67,15 +102,42 @@ public class Lexer {
                         continue;
                     }
                 }
+                if (nextCharacter.equals("-")) {
+                    String savedCharacter = nextCharacter;
+                    advance();
+                    if (peek().equals(">")) {
+                        if (sb.length() != 0) {
+                            addToTokenList(sb.toString(), currentLine, false);
+                            sb.setLength(0);
+                        }
+                        sb.append(savedCharacter);
+                        nextCharacter = peek();
+                        sb.append(nextCharacter);
+                        advance();
+                        if (sb.length() != 0) {
+                            addToTokenList(sb.toString(), currentLine, false);
+                            sb.setLength(0);
+                        }
+                        sb.setLength(0);
+                        continue;
+                    }
+                    else {
+                        sb.append(savedCharacter);
+                        continue;
+                    }
+                }
                 if (nextCharacter.equals("(") || nextCharacter.equals(",") || nextCharacter.equals(";") || nextCharacter.equals("\n")) {
                     if (sb.length() != 0) {
-                        strings.add(sb.toString());
+                        addToTokenList(sb.toString(), currentLine, false);
                         sb.setLength(0);
+                    }
+                    if (nextCharacter.equals("\n")) {
+                        currentLine++;
                     }
                 }
                 if (nextCharacter.equals(" ") && !insideQuote) {
                     if (sb.length() != 0) {
-                        strings.add(sb.toString());
+                        addToTokenList(sb.toString(), currentLine, false);
                         sb.setLength(0); // Clear the StringBuilder.
                     }
                     advance();
@@ -89,40 +151,13 @@ public class Lexer {
                 }
                 advance();
             }
-            strings.add(sb.toString());
+            addToTokenList(sb.toString(), currentLine, false);
         }
         catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return strings;
-    }
-
-    private String readUntilSpace() {
-        StringBuilder sb = new StringBuilder();
-        try {
-            boolean breakOnNextNonSpace = false;
-            while (canPeek()) {
-                String nextCharacter = peek();
-                if (!nextCharacter.equals(" ")) {
-                    if (breakOnNextNonSpace) {
-                        break;
-                    }
-                    else {
-                        sb.append(nextCharacter);
-                    }
-                }
-                else {
-                    breakOnNextNonSpace = true;
-                }
-                advance();
-            }
-            return sb.toString();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return ""; 
-        }
     }
 
     private boolean canPeek() {
@@ -260,7 +295,22 @@ public class Lexer {
             case "\0":
                 return 0;
             default:
-                return 99;
+                try {
+                    Double.parseDouble(token);
+                    if (token.contains(".")) {
+                        return 4;
+                    }
+                    else {
+                        return 3;
+                    }
+                }
+                catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    if (token.matches("[a-zA-Z_]*")) {
+                        return 2;
+                    }
+                    return 99;
+                }
         }
     }
 
