@@ -61,7 +61,7 @@ public class Lexer {
         try {
             while (canPeek()) {
                 String nextCharacter = peek();
-                //System.out.println("Current token: " + nextCharacter);
+                System.out.println("Current token: " + nextCharacter);
                 if (nextCharacter.equals("\0")) {
                     if (sb.length() != 0) {
                         addToTokenList(sb.toString(), currentLine, false);
@@ -81,6 +81,10 @@ public class Lexer {
                     }
                     else {
                         insideQuote = true;
+                        if (sb.length() != 0) {
+                            addToTokenList(sb.toString(), currentLine, false);
+                            sb.setLength(0);
+                        }
                     }
                     advance();
                     continue;
@@ -118,7 +122,7 @@ public class Lexer {
                             addToTokenList(sb.toString(), currentLine, false);
                             sb.setLength(0);
                         }
-                        sb.setLength(0);
+                        //sb.setLength(0);
                         continue;
                     }
                     else {
@@ -151,7 +155,9 @@ public class Lexer {
                 }
                 advance();
             }
-            addToTokenList(sb.toString(), currentLine, false);
+            if (sb.length() != 0) {
+                addToTokenList(sb.toString(), currentLine, false);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

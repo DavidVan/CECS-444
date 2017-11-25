@@ -87,8 +87,8 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "kprog": // Rule 1
-                Symbol kwdprog = new Symbol(10, "kwdprog", false);
-                Symbol BBlock = new Symbol(-1, "BBlock", true);
+                Symbol kwdprog = new Symbol(10, "kwdprog", true);
+                Symbol BBlock = new Symbol(-1, "BBlock", false);
                 results.add(kwdprog);
                 results.add(BBlock);
                 return results;
@@ -101,10 +101,10 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "brace1": // Rule 2
-                Symbol brace1 = new Symbol(33, "brace1", false);
-                Symbol Vargroup = new Symbol(-1, "Vargroup", true);
-                Symbol Stmts = new Symbol(-1, "Stmts", true);
-                Symbol brace2 = new Symbol(34, "brace2", false);
+                Symbol brace1 = new Symbol(33, "brace1", true);
+                Symbol Vargroup = new Symbol(-1, "Vargroup", false);
+                Symbol Stmts = new Symbol(-1, "Stmts", false);
+                Symbol brace2 = new Symbol(34, "brace2", true);
                 results.add(brace1);
                 results.add(Vargroup);
                 results.add(Stmts);
@@ -119,8 +119,8 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "kvars": // Rule 3
-                Symbol kwdvars = new Symbol(26, "kwdvars", false);
-                Symbol PPvarlist = new Symbol(-1, "PPvarlist", true);
+                Symbol kwdvars = new Symbol(26, "kwdvars", true);
+                Symbol PPvarlist = new Symbol(-1, "PPvarlist", false);
                 results.add(kwdvars);
                 results.add(PPvarlist);
                 return results;
@@ -141,9 +141,9 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "parens1": // Rule 4
-                Symbol parens1 = new Symbol(37, "parens1", false);
-                Symbol Varlist = new Symbol(-1, "Varlist", true);
-                Symbol parens2 = new Symbol(38, "parens2", false);
+                Symbol parens1 = new Symbol(37, "parens1", true);
+                Symbol Varlist = new Symbol(-1, "Varlist", false);
+                Symbol parens2 = new Symbol(38, "parens2", true);
                 results.add(parens1);
                 results.add(Varlist);
                 results.add(parens2);
@@ -159,9 +159,9 @@ public class LLTable {
             case "kint": // Rule 5 - Should fall through
             case "kfloat": // Rule 5 - Should fall through
             case "kstring": // Rule 5 - Should end here
-                Symbol Vardecl = new Symbol(-1, "Vardecl", true);
-                Symbol semi = new Symbol(7, "semi", false);
-                Symbol Varlist = new Symbol(-1, "Varlist", true);
+                Symbol Vardecl = new Symbol(-1, "Vardecl", false);
+                Symbol semi = new Symbol(7, "semi", true);
+                Symbol Varlist = new Symbol(-1, "Varlist", false);
                 results.add(Vardecl);
                 results.add(semi);
                 results.add(Varlist);
@@ -179,8 +179,8 @@ public class LLTable {
             case "kint": // Rule 6 - Should fall through
             case "kfloat": // Rule 6 - Should fall through
             case "kstring": // Rule 6 - Should end here
-                Symbol Basekind = new Symbol(-1, "Basekind", true);
-                Symbol Varid = new Symbol(-1, "Varid", true);
+                Symbol Basekind = new Symbol(-1, "Basekind", false);
+                Symbol Varid = new Symbol(-1, "Varid", false);
                 results.add(Basekind);
                 results.add(Varid);
                 return results;
@@ -193,15 +193,15 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "kint": // Rule 7
-                Symbol kint = new Symbol(16, "kwdint", false);
+                Symbol kint = new Symbol(16, "kwdint", true);
                 results.add(kint);
                 return results;
             case "kfloat": // Rule 8
-                Symbol kfloat = new Symbol(15, "kwdfloat", false);
+                Symbol kfloat = new Symbol(15, "kwdfloat", true);
                 results.add(kfloat);
                 return results;
             case "kstring": // Rule 9
-                Symbol kstring = new Symbol(17, "kwdstring", false);
+                Symbol kstring = new Symbol(17, "kwdstring", true);
                 results.add(kstring);
                 return results;
             default:
@@ -213,7 +213,7 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "id": // Rule 10
-                Symbol id = new Symbol(2, "id", false);
+                Symbol id = new Symbol(2, "id", true);
                 results.add(id);
                 return results;
             default:
@@ -227,12 +227,12 @@ public class LLTable {
             case "id": // Rule 11 - Should fall through
             case "kprint": // Rule 11 - Should fall through
             case "kwhile": // Rule 11 - Should end here
-                Symbol Stmt = new Symbol(-1, "Stmt", true);
-                Symbol semi = new Symbol(7, "semi", false);
-                Symbol Varlist = new Symbol(-1, "Varlist", true);
+                Symbol Stmt = new Symbol(-1, "Stmt", false);
+                Symbol semi = new Symbol(7, "semi", true);
+                Symbol Stmts = new Symbol(-1, "Stmts", false);
                 results.add(Stmt);
                 results.add(semi);
-                results.add(Varlist);
+                results.add(Stmts);
                 return results;
             case "brace2": // Rule 46
                 return results;
@@ -245,15 +245,15 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "id": // Rule 12
-                Symbol Stasgn = new Symbol(-1, "Stasgn", true);
+                Symbol Stasgn = new Symbol(-1, "Stasgn", false);
                 results.add(Stasgn);
                 return results;
             case "kprint": // Rule 13
-                Symbol Stprint = new Symbol(-1, "Stprint", true);
+                Symbol Stprint = new Symbol(-1, "Stprint", false);
                 results.add(Stprint);
                 return results;
             case "kwhile": // Rule 14
-                Symbol Stwhile = new Symbol(-1, "Stwhile", true);
+                Symbol Stwhile = new Symbol(-1, "Stwhile", false);
                 results.add(Stwhile);
                 return results;
             default:
@@ -265,9 +265,9 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "id": // Rule 15
-                Symbol Varid = new Symbol(-1, "Varid", true);
-                Symbol equal = new Symbol(45, "equal", false);
-                Symbol Expr = new Symbol(-1, "Expr", true);
+                Symbol Varid = new Symbol(-1, "Varid", false);
+                Symbol equal = new Symbol(45, "equal", true);
+                Symbol Expr = new Symbol(-1, "Expr", false);
                 results.add(Varid);
                 results.add(equal);
                 results.add(Expr);
@@ -280,9 +280,9 @@ public class LLTable {
     private List<Symbol> getStprintSymbols(Token token) throws Exception {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
-            case "": // Rule 16
-                Symbol kprint = new Symbol(23, "kwdprint", false);
-                Symbol PPexprs = new Symbol(-1, "PPexprs", true);
+            case "kprint": // Rule 16
+                Symbol kprint = new Symbol(23, "kwdprint", true);
+                Symbol PPexprs = new Symbol(-1, "PPexprs", false);
                 results.add(kprint);
                 results.add(PPexprs);
                 return results;
@@ -295,9 +295,9 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "kwhile": // Rule 17
-                Symbol kwdwhile = new Symbol(21, "kwdwhile", false);
-                Symbol PPexprl = new Symbol(-1, "PPexprl", true);
-                Symbol BBlock = new Symbol(-1, "BBlock", true);
+                Symbol kwdwhile = new Symbol(21, "kwdwhile", true);
+                Symbol PPexprl = new Symbol(-1, "PPexprl", false);
+                Symbol BBlock = new Symbol(-1, "BBlock", false);
                 results.add(kwdwhile);
                 results.add(PPexprl);
                 results.add(BBlock);
@@ -311,9 +311,9 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "parens1": // Rule 18
-                Symbol parens1 = new Symbol(37, "parens1", false);
-                Symbol Exprlist = new Symbol(-1, "Exprlist", true);
-                Symbol parens2 = new Symbol(38, "parens2", false);
+                Symbol parens1 = new Symbol(37, "parens1", true);
+                Symbol Exprlist = new Symbol(-1, "Exprlist", false);
+                Symbol parens2 = new Symbol(38, "parens2", true);
                 results.add(parens1);
                 results.add(Exprlist);
                 results.add(parens2);
@@ -327,9 +327,9 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "parens1": // Rule 19
-                Symbol parens1 = new Symbol(37, "parens1", false);
-                Symbol Expr = new Symbol(-1, "Expr", true);
-                Symbol parens2 = new Symbol(38, "parens2", false);
+                Symbol parens1 = new Symbol(37, "parens1", true);
+                Symbol Expr = new Symbol(-1, "Expr", false);
+                Symbol parens2 = new Symbol(38, "parens2", true);
                 results.add(parens1);
                 results.add(Expr);
                 results.add(parens2);
@@ -343,12 +343,12 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "parens1": // Rule 20 - Should fall through
-            case "kint": // Rule 20 - Should fall through
-            case "kfloat": // Rule 20 - Should fall through
-            case "kstring": // Rule 20 - Should fall through
+            case "int": // Rule 20 - Should fall through
+            case "float": // Rule 20 - Should fall through
+            case "string": // Rule 20 - Should fall through
             case "id": // Rule 20 - Should end here
-                Symbol Expr = new Symbol(-1, "Expr", true);
-                Symbol Moreexprs = new Symbol(-1, "Moreexprs", true);
+                Symbol Expr = new Symbol(-1, "Expr", false);
+                Symbol Moreexprs = new Symbol(-1, "Moreexprs", false);
                 results.add(Expr);
                 results.add(Moreexprs);
                 return results;
@@ -361,12 +361,12 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "comma": // Rule 21
-                Symbol comma = new Symbol(6, "comma", false);
-                Symbol Exprlist = new Symbol(-1, "Exprlist", true);
+                Symbol comma = new Symbol(6, "comma", true);
+                Symbol Exprlist = new Symbol(-1, "Exprlist", false);
                 results.add(comma);
                 results.add(Exprlist);
                 return results;
-            case "brace2": // Rule 49
+            case "parens2": // Rule 49
                 return results;
             default:
                 throw new Exception("Token not found!");
@@ -382,11 +382,11 @@ public class LLTable {
             case "opge": // Rule 22 - Should fall through
             case "angle1": // Rule 22 - Should fall through
             case "angle2": // Rule 22 - Should end here
-                Symbol Oprel = new Symbol(-1, "Oprel", true);
-                Symbol RTerm = new Symbol(-1, "RTerm", true);
-                Symbol E = new Symbol(-1, "E", true);
+                Symbol Oprel = new Symbol(-1, "Oprel", false);
+                Symbol Rterm = new Symbol(-1, "Rterm", false);
+                Symbol E = new Symbol(-1, "E", false);
                 results.add(Oprel);
-                results.add(RTerm);
+                results.add(Rterm);
                 results.add(E);
                 return results;
             default: // Special case for LRE... Rule 50
@@ -402,9 +402,9 @@ public class LLTable {
             case "float": // Rule 23 - Should fall through
             case "string": // Rule 23 - Should fall through
             case "id": // Rule 23 - Should end here
-                Symbol RTerm = new Symbol(-1, "RTerm", true);
-                Symbol E = new Symbol(-1, "E", true);
-                results.add(RTerm);
+                Symbol Rterm = new Symbol(-1, "Rterm", false);
+                Symbol E = new Symbol(-1, "E", false);
+                results.add(Rterm);
                 results.add(E);
                 return results;
             default:
@@ -417,9 +417,9 @@ public class LLTable {
         switch (token.getTokenName()) {
             case "plus": // Rule 24 - Should fall through
             case "minus": // Rule 24 - Should end here
-                Symbol Opadd = new Symbol(-1, "Opadd", true);
-                Symbol Term = new Symbol(-1, "Term", true);
-                Symbol R = new Symbol(-1, "R", true);
+                Symbol Opadd = new Symbol(-1, "Opadd", false);
+                Symbol Term = new Symbol(-1, "Term", false);
+                Symbol R = new Symbol(-1, "R", false);
                 results.add(Opadd);
                 results.add(Term);
                 results.add(R);
@@ -437,8 +437,8 @@ public class LLTable {
             case "float": // Rule 25 - Should fall through
             case "string": // Rule 25 - Should fall through
             case "id": // Rule 25 - Should end here
-                Symbol Term = new Symbol(-1, "Term", true);
-                Symbol R = new Symbol(-1, "R", true);
+                Symbol Term = new Symbol(-1, "Term", false);
+                Symbol R = new Symbol(-1, "R", false);
                 results.add(Term);
                 results.add(R);
                 return results;
@@ -453,9 +453,9 @@ public class LLTable {
             case "aster": // Rule 26 - Should fall through
             case "slash": // Rule 26 - Should fall through
             case "caret": // Rule 26 - Should end here
-                Symbol Opmul = new Symbol(-1, "Opmul", true);
-                Symbol Fact = new Symbol(-1, "Fact", true);
-                Symbol T = new Symbol(-1, "T", true);
+                Symbol Opmul = new Symbol(-1, "Opmul", false);
+                Symbol Fact = new Symbol(-1, "Fact", false);
+                Symbol T = new Symbol(-1, "T", false);
                 results.add(Opmul);
                 results.add(Fact);
                 results.add(T);
@@ -473,8 +473,8 @@ public class LLTable {
             case "float": // Rule 27 - Should fall through
             case "string": // Rule 27 - Should fall through
             case "id": // Rule 27 - Should end here
-                Symbol Fact = new Symbol(-1, "Fact", true);
-                Symbol T = new Symbol(-1, "T", true);
+                Symbol Fact = new Symbol(-1, "Fact", false);
+                Symbol T = new Symbol(-1, "T", false);
                 results.add(Fact);
                 results.add(T);
                 return results;
@@ -487,23 +487,23 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "int": // Rule 28
-                Symbol fact_int = new Symbol(3, "int", false);
+                Symbol fact_int = new Symbol(3, "int", true);
                 results.add(fact_int);
                 return results;
             case "float": // Rule 29
-                Symbol fact_float = new Symbol(4, "float", false);
+                Symbol fact_float = new Symbol(4, "float", true);
                 results.add(fact_float);
                 return results;
             case "string": // Rule 30
-                Symbol string = new Symbol(5, "string", false);
+                Symbol string = new Symbol(5, "string", true);
                 results.add(string);
                 return results;
             case "id": // Rule 31
-                Symbol Varid = new Symbol(-1, "Varid", true);
+                Symbol Varid = new Symbol(-1, "Varid", false);
                 results.add(Varid);
                 return results;
             case "parens1": // Rule 32
-                Symbol PPexprl = new Symbol(-1, "PPexprl", true);
+                Symbol PPexprl = new Symbol(-1, "PPexprl", false);
                 results.add(PPexprl);
                 return results;
             default:
@@ -515,27 +515,27 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "opeq": // Rule 33
-                Symbol opeq = new Symbol(52, "opeq", false);
+                Symbol opeq = new Symbol(52, "opeq", true);
                 results.add(opeq);
                 return results;
             case "opne": // Rule 34
-                Symbol opne = new Symbol(53, "opne", false);
+                Symbol opne = new Symbol(53, "opne", true);
                 results.add(opne);
                 return results;
             case "angle1": // Rule 35
-                Symbol Lthan = new Symbol(-1, "Lthan", true);
+                Symbol Lthan = new Symbol(-1, "Lthan", false);
                 results.add(Lthan);
                 return results;
             case "ople": // Rule 36
-                Symbol ople = new Symbol(54, "ople", false);
+                Symbol ople = new Symbol(54, "ople", true);
                 results.add(ople);
                 return results;
             case "opge": // Rule 37
-                Symbol opge  = new Symbol(55, "opge", false);
+                Symbol opge  = new Symbol(55, "opge", true);
                 results.add(opge);
                 return results;
             case "angle2": // Rule 38
-                Symbol Gthan = new Symbol(-1, "Gthan", true);
+                Symbol Gthan = new Symbol(-1, "Gthan", false);
                 results.add(Gthan);
                 return results;
             default:
@@ -547,7 +547,7 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "angle1": // Rule 39
-                Symbol angle1 = new Symbol(31, "angle1", false);
+                Symbol angle1 = new Symbol(31, "angle1", true);
                 results.add(angle1);
                 return results;
             default:
@@ -559,7 +559,7 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "angle2": // Rule 40
-                Symbol angle2 = new Symbol(32, "angle2", false);
+                Symbol angle2 = new Symbol(32, "angle2", true);
                 results.add(angle2);
                 return results;
             default:
@@ -571,11 +571,11 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "plus":
-                Symbol plus = new Symbol(47, "plus", false);
+                Symbol plus = new Symbol(47, "plus", true);
                 results.add(plus);
                 return results;
             case "minus":
-                Symbol minus = new Symbol(46, "minus", false);
+                Symbol minus = new Symbol(46, "minus", true);
                 results.add(minus);
                 return results;
             default:
@@ -586,15 +586,15 @@ public class LLTable {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
             case "aster":
-                Symbol aster = new Symbol(41, "aster", false);
+                Symbol aster = new Symbol(41, "aster", true);
                 results.add(aster);
                 return results;
             case "slash":
-                Symbol slash = new Symbol(48, "slash", false);
+                Symbol slash = new Symbol(48, "slash", true);
                 results.add(slash);
                 return results;
             case "caret":
-                Symbol caret = new Symbol(42, "caret", false);
+                Symbol caret = new Symbol(42, "caret", true);
                 results.add(caret);
                 return results;
             default:

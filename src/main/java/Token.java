@@ -9,7 +9,7 @@ public class Token {
         tokenIdToName.put(3, "int");
         tokenIdToName.put(4, "float");
         tokenIdToName.put(5, "string");
-        tokenIdToName.put(6, "coma");
+        tokenIdToName.put(6, "comma");
         tokenIdToName.put(7, "semi");
         tokenIdToName.put(10, "kprog");
         tokenIdToName.put(11, "kmain");
@@ -92,6 +92,10 @@ public class Token {
             throw new Exception("No float value set for this token!");
         }
         return this.mFloat;
+    }
+
+    public int getTokenId() {
+        return this.tokenId;
     }
 
     public String getTokenName() {
