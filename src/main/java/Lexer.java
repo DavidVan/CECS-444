@@ -6,7 +6,7 @@ public class Lexer {
     private int currentIndex;
 
     private List<Token> tokens;
-
+    
     public Lexer(String input) {
         this.input= input.toCharArray();
         this.currentIndex = -1;
@@ -61,7 +61,7 @@ public class Lexer {
         try {
             while (canPeek()) {
                 String nextCharacter = peek();
-                System.out.println("Current token: " + nextCharacter);
+                //System.out.println("Current token: " + nextCharacter);
                 if (nextCharacter.equals("\0")) {
                     if (sb.length() != 0) {
                         addToTokenList(sb.toString(), currentLine, false);
@@ -218,6 +218,8 @@ public class Lexer {
                 return 24;
             case "return":
                 return 25;
+            case "vars":
+                return 26;
             default:
                 return 99;
         }
@@ -305,7 +307,7 @@ public class Lexer {
                     }
                 }
                 catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     if (token.matches("[a-zA-Z_]*")) {
                         return 2;
                     }
