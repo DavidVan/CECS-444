@@ -68,7 +68,7 @@ public class Lexer {
         try {
             while (canPeek()) {
                 String nextCharacter = peek();
-                System.out.println("Current token: " + nextCharacter);
+                // System.out.println("Current token: " + nextCharacter);
                 if (nextCharacter.equals("\0")) {
                     if (sb.length() != 0) {
                         addToTokenList(sb.toString(), currentLine, false);

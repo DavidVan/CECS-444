@@ -582,6 +582,7 @@ public class LLTable {
                 throw new Exception("Token not found!");
         }
     }
+
     private List<Symbol> getOpmulSymbols(Token token) throws Exception {
         List<Symbol> results = new ArrayList<>();
         switch (token.getTokenName()) {
