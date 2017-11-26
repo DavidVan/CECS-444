@@ -80,4 +80,128 @@ public class Parser {
         return tree;
     }
 
+    public Node parseToAST(Node parseTree, Node parent) {
+        Node fixedNode = simplifyNode(parseTree, parent); // Fix the node
+        List<Node> children = fixedNode.getChildren();
+        if (children.size() == 0) {
+            return fixedNode;
+        }
+        List<Node> newChildren = new ArrayList<>();
+        for (Node c : children) {
+            if (c != fixedNode) {
+                System.out.println("Processing: " + c);
+                Node fixedChildNode = parseToAST(c, fixedNode);
+                newChildren.add(fixedChildNode);
+                System.out.println("Fixed Node: " + fixedChildNode);
+            }
+        }
+        children.clear(); // Clear old children list...
+        for (Node nC : newChildren) {
+            children.add(nC); // Add new children...
+        }
+        return fixedNode;
+    }
+
+    private Node simplifyNode(Node n, Node parent) {
+        List<Node> children = n.getChildren();
+        if (children.size() != 0) {
+            String symbolName = n.getSymbol().getSymbolName();
+            if (symbolName.equals("Pgm")) {
+                Node kwdprog = n.getChildWithName("kwdprog");
+                Node BBlock = n.getChildWithName("BBlock");
+                kwdprog.addChild(BBlock);
+                return kwdprog;
+            }
+            else if (symbolName.equals("BBlock")) {
+                Node brace1 = n.getChildWithName("brace1");
+                // Node Vargroup = n.getChildWithName(1);
+                Node Stmts = n.getChildWithName("Stmts");
+                Node brace2 = n.getChildWithName("brace2");
+                // brace1.addChild(Vargroup);
+                // Special case for Stmts... We don't replace brace1 with Stmt's childs... We add them as childs of brace1.
+                Node StmtsChildStmt = Stmts.getChildWithName("Stmt"); // Get the Stmt node.
+                // We skip getting the semi node.
+                Node StmtsChildStmts = Stmts.getChildWithName("Stmts"); // Get the Stmts node.
+                brace1.addChild(StmtsChildStmt);
+                brace1.addChild(StmtsChildStmts);
+                brace1.addChild(brace2);
+                return brace1;
+            }
+            else if (symbolName.equals("Stmts")) {
+                Node Stmt = n.getChildWithName("Stmt");
+                // Node semi = n.getChildWithName("semi");
+                Node Stmts = n.getChildWithName("Stmts");
+                // Stmt.addChild(semi);
+                Stmt.addChild(Stmts);
+                return Stmt;
+            }
+            else if (symbolName.equals("Stmt")) {
+                Node childSymbol = simplifyNode(children.get(0), parent); // Stmt only has one child... Stasgn, Stprint, or Stwhile
+                return childSymbol;
+            }
+            else if (symbolName.equals("Stasgn")) {
+                Node Varid = n.getChildWithName("Varid");
+                Node equal = n.getChildWithName("equal");
+                Node Expr = n.getChildWithName("Expr");
+                equal.addChild(Varid);
+                equal.addChild(Expr);
+                return equal;
+            }
+            else if (symbolName.equals("Stprint")) {
+                Node kwdprint = n.getChildWithName("kwdprint");
+                Node PPexprs = n.getChildWithName("PPexprs");
+                kwdprint.addChild(PPexprs);
+                return kwdprint;
+            }
+            else if (symbolName.equals("Stwhile")) {
+                Node kwdwhile = n.getChildWithName("kwdwhile");
+                Node PPexprl = n.getChildWithName("PPexprl");
+                Node BBlock = n.getChildWithName("BBlock");
+                kwdwhile.addChild(PPexprl);
+                kwdwhile.addChild(BBlock);
+                return kwdwhile;
+            }
+            else if (symbolName.equals("Varid")) {
+                Node id = n.getChildWithName("id");
+                return id;
+            }
+            // else if (symbolName.equals("Expr")) {
+            //     Node Rterm = n.getChildWithName("Rterm");
+            //     Node E = n.getChildWithName("E");
+            //     Rterm.addChild(Rterm.getChildWithName("Term"));
+            //     if (E.getChildren().size() != 0) {
+            //         Rterm.addChild(E);
+            //     }
+            //     return Rterm;
+            // }
+            // else if (symbolName.equals("Rterm")) {
+            //     Node Term = n.getChildWithName("Term");
+            //     Node R = n.getChildWithName("R");
+            //     Term.addChild(Term.getChildWithName("Fact"));
+            //     if (R.getChildren().size() != 0) {
+            //         Term.addChild(R);
+            //     }
+            //     return Term;
+            // }
+            // else if (symbolName.equals("Term")) {
+            //     Node Fact = n.getChildWithName("Fact");
+            //     Node T = n.getChildWithName("T");
+            //     if (n.getSymbol().isTerminal()) {
+            //         Fact.addChild(children.get(0));
+            //     }
+            //     else {
+            //         Fact.addChild(children.get(0));
+            //     }
+            //     if (T.getChildren().size() != 0) {
+            //         Fact.addChild(T);
+            //     }
+            //     return Fact;
+            // }
+            else if (symbolName.equals("")) {
+
+            }
+        }
+        return n;
+    }
+
 }

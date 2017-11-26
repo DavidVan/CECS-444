@@ -22,7 +22,9 @@ public class main {
         }
         Parser parser = new Parser(tokens);
         Node PST = parser.parse();
-        printTree(PST);
+        System.out.println("Converting to AST...");
+        Node AST = parser.parseToAST(PST, null);
+        printTree(AST);
         // List<String> strings = lexer.processInputAsStrings();
         // for (String s : strings) {
         //     System.out.println("Token: \"" + s + "\"");

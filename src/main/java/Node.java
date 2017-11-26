@@ -58,6 +58,15 @@ public class Node {
         this.children.add(child);
     }
 
+    public Node getChildWithName(String name) {
+        for (Node c : this.children) {
+            if (c.symbol.getSymbolName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         if (this.children.size() != 0) {
