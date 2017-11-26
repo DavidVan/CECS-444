@@ -69,6 +69,10 @@ public class Token {
         this.integerIsSet = false;
         this.floatIsSet = false;
     }
+    
+    public boolean hasInt() {
+        return this.integerIsSet;
+    }
 
     public void setInt(int anInteger) {
         this.mInteger = anInteger;
@@ -80,6 +84,10 @@ public class Token {
             throw new Exception("No integer value set for this token!");
         }
         return this.mInteger;
+    }
+
+    public boolean hasFloat() {
+        return this.floatIsSet;
     }
 
     public void setFloat(float aFloat) {
@@ -96,6 +104,10 @@ public class Token {
 
     public int getTokenId() {
         return this.tokenId;
+    }
+
+    public String getTokenStringName() {
+        return this.tokenName;
     }
 
     public String getTokenName() {

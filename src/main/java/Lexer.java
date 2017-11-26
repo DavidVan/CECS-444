@@ -22,7 +22,14 @@ public class Lexer {
     private void addToTokenList(String token, int currentLine, boolean isString) {
         if (!isString) {
             int tokenId = handleToken(token);
-            this.tokens.add(new Token(currentLine, tokenId, token));
+            Token tokenObject = new Token(currentLine, tokenId, token);
+            this.tokens.add(tokenObject);
+            if (tokenId == 3) {
+                tokenObject.setInt(Integer.parseInt(token));
+            }
+            if (tokenId == 4) {
+                tokenObject.setFloat(Float.parseFloat(token));
+            }
         }
         else {
             this.tokens.add(new Token(currentLine, 5, token));

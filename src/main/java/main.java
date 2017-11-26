@@ -13,18 +13,31 @@ public class main {
         String test3 = "prog { // Find the hypotenuse of a right triangle.\n    print( \"Input legs> \" );\n    print( \"Hypotenuse= \", ( a * a + b * b ) ^ 0.5 );\n}\0";
         String test4 = "prog {\n    leet = 13.37;\n    print(\"This is just a test!\");\n}\0";
         String test5 = "prog {\n    true_thing = 1 < 2;\n    print(\"Hello\", \"World\");\n    false_thing = 1 > 2;\n}\0";
-        System.out.println(test3);
-        Lexer lexer = new Lexer(test3);
+        System.out.println(test2);
+        Lexer lexer = new Lexer(test2);
 
         List<Token> tokens = lexer.processInput();
         for (Token t : tokens) {
             System.out.println(t);
         }
         Parser parser = new Parser(tokens);
-        parser.parse();
+        Node PST = parser.parse();
+        printTree(PST);
         // List<String> strings = lexer.processInputAsStrings();
         // for (String s : strings) {
         //     System.out.println("Token: \"" + s + "\"");
         // }
     }
+
+    public static void printTree(Node tree) {
+        System.out.println(tree);
+        List<Node> children = tree.getChildren();
+        if (children.size() == 0) {
+            return;
+        }
+        for (Node n : children) {
+            printTree(n);
+        }
+    }
+
 }
