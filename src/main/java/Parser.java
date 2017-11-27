@@ -136,12 +136,14 @@ public class Parser {
                 // Node semi = n.getChildWithName("semi");
                 Node Stmts = n.getChildWithName("Stmts");
                 // Stmt.addChild(semi);
-                Stmt.addChild(Stmts);
-                return Stmt;
+                Stmt.addChild(simplifyNode(Stmts, parent));
+                return simplifyNode(Stmt, parent); // TODO: Check this... I don't think we need to simplify here but if we don't get get a dangling Stmt node... If we do simplify, we don't get aster anymore... In fact, we don't get any of the tree past this point...
             }
             else if (symbolName.equals("Stmt")) {
-                Node childSymbol = simplifyNode(children.get(0), parent); // Stmt only has one child... Stasgn, Stprint, or Stwhile
-                return childSymbol;
+                if (children.get(0).getChildren().size() != 0) {
+                    Node childSymbol = simplifyNode(children.get(0), parent); // Stmt only has one child... Stasgn, Stprint, or Stwhile
+                    return childSymbol;
+                }
             }
             else if (symbolName.equals("Stasgn")) {
                 Node Varid = n.getChildWithName("Varid");
@@ -289,42 +291,43 @@ public class Parser {
                     return simplifyNode(Fact, parent);
                 }
             }
-            
-
-            // else if (symbolName.equals("Expr")) {
-            //     Node Rterm = n.getChildWithName("Rterm");
-            //     Node E = n.getChildWithName("E");
-            //     Rterm.addChild(Rterm.getChildWithName("Term"));
-            //     if (E.getChildren().size() != 0) {
-            //         Rterm.addChild(E);
-            //     }
-            //     return Rterm;
-            // }
-            // else if (symbolName.equals("Rterm")) {
-            //     Node Term = n.getChildWithName("Term");
-            //     Node R = n.getChildWithName("R");
-            //     Term.addChild(Term.getChildWithName("Fact"));
-            //     if (R.getChildren().size() != 0) {
-            //         Term.addChild(R);
-            //     }
-            //     return Term;
-            // }
-            // else if (symbolName.equals("Term")) {
-            //     Node Fact = n.getChildWithName("Fact");
-            //     Node T = n.getChildWithName("T");
-            //     if (n.getSymbol().isTerminal()) {
-            //         Fact.addChild(children.get(0));
-            //     }
-            //     else {
-            //         Fact.addChild(children.get(0));
-            //     }
-            //     if (T.getChildren().size() != 0) {
-            //         Fact.addChild(T);
-            //     }
-            //     return Fact;
-            // }
-            else if (symbolName.equals("")) {
-
+            else if (symbolName.equals("Fact")) {
+                return children.get(0); // We only have one child for Fact nodes...
+            }
+            else if (symbolName.equals("PPexprs")) {
+                Node parens1 = n.getChildWithName("parens1");
+                Node Exprlist = n.getChildWithName("Exprlist");
+                Node parens2 = n.getChildWithName("parens2");
+                parens1.addChild(Exprlist);
+                parens1.addChild(parens2);
+                return parens1;
+            }
+            else if (symbolName.equals("Exprlist")) {
+                Node Expr = n.getChildWithName("Expr");
+                Node Moreexprs = n.getChildWithName("Moreexprs");
+                Expr.addChild(simplifyNode(Moreexprs, parent));
+                return simplifyNode(Expr, parent);
+            }
+            else if (symbolName.equals("Moreexprs")) {
+                if (n.getChildWithName("comma") != null) {
+                    Node Exprlist = n.getChildWithName("Exprlist");
+                    return Exprlist;
+                }
+            }
+            else if (symbolName.equals("Lthan")) {
+                return n.getChildWithName("angle1");
+            }
+            else if (symbolName.equals("Gthan")) {
+                return n.getChildWithName("angle2");
+            }
+            else if (symbolName.equals("Opadd")) {
+                return children.get(0);
+            }
+            else if (symbolName.equals("Opmul")) {
+                return children.get(0);
+            }
+            else if (symbolName.equals("Oprel")) {
+                return children.get(0);
             }
         }
         return n;
