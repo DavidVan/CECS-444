@@ -9,7 +9,7 @@ public class Node {
     private List<Node> children;
 
     public Node(int nodeId, Symbol symbol) {
-        this.nodeId = nodeId;
+        this.nodeId = nodeId;   
         this.symbol = symbol;
         children = new ArrayList<>();
     }

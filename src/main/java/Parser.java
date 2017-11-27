@@ -5,6 +5,10 @@ public class Parser {
     private LLTable table = new LLTable();
     private List<Token> tokens;
 
+    public Parser(){
+
+    }
+
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
@@ -332,5 +336,92 @@ public class Parser {
         }
         return n;
     }
+
+
+
+//Pat's implementation
+    public void ast2sct(Node arn, SNode rsn){
+        if(arn == null){
+            return;
+        }
+        if(isBlock(arn)){
+            a2sBlock(arn, rsn);
+        }
+        else if (isDecl(arn)){
+            astDecl(arn, rsn);
+        }
+        /* FIX
+        else if (isUse(arn)){
+
+        }*/
+        else{
+            for (Node k : arn.getChildren()) {
+                ast2sct(k, rsn);
+            }
+        }
+
+
+    }
+
+    //Check if the AST current symbol is left bracket
+    //WORKS
+    public boolean isBlock(Node arn){
+        String st = arn.getSymbol().getSymbolName();
+        if(st.equals("brace1"))
+            return true;
+        else
+            return false;
+    }
+
+    //Check if the AST current symbol is an ID type
+    public boolean isDecl(Node arn){
+
+        String st = arn.getSymbol().getSymbolName();
+        if(st.equals("id"))
+            return true;
+        else
+            return false;
+
+    }
+
+    //NEED FIX
+    public boolean isUse(Node arn){
+        String st = arn.getSymbol().getSymbolName();
+        if(st.equals("+") || st.equals("-") || 
+            st.equals("*") || st.equals("/") ||
+            st.equals(">") || st.equals("<") ||
+            st.equals("^") || st.equals("=")){
+                return true;
+        }
+        else
+            return false;
+    }
+
+    
+    //Create a new scope
+    public void a2sBlock(Node arn, SNode rsnParent){
+        SNode sKid = new SNode(rsnParent);
+        rsnParent.linkParentToChild(sKid);
+        for(Node kid: arn.getChildren()){
+            ast2sct(kid, sKid);
+        }
+    }
+
+    //If it's a decl then add to the entry
+    public void astDecl(Node arn, SNode rsn){
+        Map<String, Node> sMap = rsn.getSCTMap();
+        try{
+            String tokenName = arn.getToken().getTokenStringName();
+            sMap.put(tokenName, arn);
+        }
+        catch(Exception e){};
+        if (arn.getChildren().size() > 1) {
+        Node rKid = arn.getChildren().get(1);
+            if(rKid != null && isDecl(rKid)){
+                astDecl(rKid, rsn);
+            }
+        }
+    }
+//End Pat's implementation
 
 }
