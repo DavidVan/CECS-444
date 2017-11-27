@@ -87,8 +87,12 @@ public class Parser {
             return fixedNode;
         }
         List<Node> newChildren = new ArrayList<>();
-        for (Node c : children) {
+        for (int i = 0; i < children.size(); i++) {
+            Node c = children.get(i);
             if (c != fixedNode) {
+                if (c.getSymbol().getSymbolName().equals("Rterm")) {
+                    System.out.println("ENCOUNTERED RTERM NODE..." + c);
+                }
                 System.out.println("Processing: " + c);
                 Node fixedChildNode = parseToAST(c, fixedNode);
                 newChildren.add(fixedChildNode);
@@ -165,6 +169,128 @@ public class Parser {
                 Node id = n.getChildWithName("id");
                 return id;
             }
+            else if (symbolName.equals("Expr")) {
+                if (n.getChildWithName("Oprel") != null) {
+                    Node Oprel = n.getChildWithName("Oprel");
+                    Node Rterm = n.getChildWithName("Rterm");
+                    Node E = n.getChildWithName("E");
+                    Oprel.addChild(Rterm);
+                    if (E.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(E, parent));
+                    }
+                    return Oprel;
+                }
+                else {
+                    Node Rterm = n.getChildWithName("Rterm");
+                    Node E = n.getChildWithName("E");
+                    if (E.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(E, parent));
+                    }
+                    return simplifyNode(Rterm, parent);
+                }
+            }
+            else if (symbolName.equals("Rterm")) {
+                if (n.getChildWithName("Opadd") != null) {
+                    Node Opadd = n.getChildWithName("Opadd");
+                    Node Term = n.getChildWithName("Term");
+                    Node R = n.getChildWithName("R");
+                    Opadd.addChild(Term);
+                    if (R.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(R, parent));
+                    }
+                    return Opadd;
+                }
+                else {
+                    Node Term = n.getChildWithName("Term");
+                    Node R = n.getChildWithName("R");
+                    if (R.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(R, parent));
+                    }
+                    return simplifyNode(Term, parent);
+                }
+            }
+            else if (symbolName.equals("Term")) {
+                if (n.getChildWithName("Opmul") != null) {
+                    Node Opmul = n.getChildWithName("Opmul");
+                    Node Fact = n.getChildWithName("Fact");
+                    Node T = n.getChildWithName("T");
+                    Opmul.addChild(Fact);
+                    if (T.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(T, parent));
+                    }
+                    return Opmul;
+                }
+                else {
+                    Node Fact = n.getChildWithName("Fact");
+                    Node T = n.getChildWithName("T");
+                    if (T.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(T, parent));
+                    }
+                    return simplifyNode(Fact, parent);
+                }
+            }
+            else if (symbolName.equals("E")) {
+                if (n.getChildWithName("Oprel") != null) {
+                    Node Oprel = n.getChildWithName("Oprel");
+                    Node Rterm = n.getChildWithName("Rterm");
+                    Node E = n.getChildWithName("E");
+                    Oprel.addChild(Rterm);
+                    if (E.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(E, parent));
+                    }
+                    return Oprel;
+                }
+                else {
+                    Node Rterm = n.getChildWithName("Rterm");
+                    Node E = n.getChildWithName("E");
+                    if (E.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(E, parent));
+                    }
+                    return simplifyNode(Rterm, parent);
+                }
+            }
+            else if (symbolName.equals("R")) {
+                if (n.getChildWithName("Opadd") != null) {
+                    Node Opadd = n.getChildWithName("Opadd");
+                    Node Term = n.getChildWithName("Term");
+                    Node R = n.getChildWithName("R");
+                    Opadd.addChild(Term);
+                    if (R.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(R, parent));
+                    }
+                    return Opadd;
+                }
+                else {
+                    Node Term = n.getChildWithName("Term");
+                    Node R = n.getChildWithName("R");
+                    if (R.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(R, parent));
+                    }
+                    return simplifyNode(Term, parent);
+                }
+            }
+            else if (symbolName.equals("T")) {
+                if (n.getChildWithName("Opmul") != null) {
+                    Node Opmul = n.getChildWithName("Opmul");
+                    Node Fact = n.getChildWithName("Fact");
+                    Node T = n.getChildWithName("T");
+                    Opmul.addChild(Fact);
+                    if (T.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(T, parent));
+                    }
+                    return Opmul;
+                }
+                else {
+                    Node Fact = n.getChildWithName("Fact");
+                    Node T = n.getChildWithName("T");
+                    if (T.getChildren().size() != 0) {
+                        parent.addChild(simplifyNode(T, parent));
+                    }
+                    return simplifyNode(Fact, parent);
+                }
+            }
+            
+
             // else if (symbolName.equals("Expr")) {
             //     Node Rterm = n.getChildWithName("Rterm");
             //     Node E = n.getChildWithName("E");
