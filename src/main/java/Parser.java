@@ -347,13 +347,9 @@ public class Parser {
         if(isBlock(arn)){
             a2sBlock(arn, rsn);
         }
-        else if (isDecl(arn)){
-            astDecl(arn, rsn);
-        }
-        /* FIX
         else if (isUse(arn)){
-
-        }*/
+            astUse(arn, rsn);
+        }
         else{
             for (Node k : arn.getChildren()) {
                 ast2sct(k, rsn);
@@ -374,7 +370,7 @@ public class Parser {
     }
 
     //Check if the AST current symbol is an ID type
-    public boolean isDecl(Node arn){
+    public boolean isUse(Node arn){
 
         String st = arn.getSymbol().getSymbolName();
         if(st.equals("id"))
@@ -383,20 +379,6 @@ public class Parser {
             return false;
 
     }
-
-    //NEED FIX
-    public boolean isUse(Node arn){
-        String st = arn.getSymbol().getSymbolName();
-        if(st.equals("+") || st.equals("-") || 
-            st.equals("*") || st.equals("/") ||
-            st.equals(">") || st.equals("<") ||
-            st.equals("^") || st.equals("=")){
-                return true;
-        }
-        else
-            return false;
-    }
-
     
     //Create a new scope
     public void a2sBlock(Node arn, SNode rsnParent){
@@ -408,17 +390,31 @@ public class Parser {
     }
 
     //If it's a decl then add to the entry
-    public void astDecl(Node arn, SNode rsn){
+    public void astUse(Node arn, SNode rsn){
         Map<String, Node> sMap = rsn.getSCTMap();
         try{
             String tokenName = arn.getToken().getTokenStringName();
+            while(rsn.getParent()!=null){
+                Map<String, Node> pMap = rsn.getParent().getSCTMap();
+                
+                if(pMap.containsKey(tokenName)){
+                    //Do
+                    pMap.put(tokenName,arn);
+                    break;
+                }
+                else{
+                    rsn = rsn.getParent();
+                }
+
+            }
             sMap.put(tokenName, arn);
         }
         catch(Exception e){};
         if (arn.getChildren().size() > 1) {
         Node rKid = arn.getChildren().get(1);
-            if(rKid != null && isDecl(rKid)){
-                astDecl(rKid, rsn);
+            if(rKid != null && isUse(rKid)){
+
+                astUse(rKid, rsn);
             }
         }
     }

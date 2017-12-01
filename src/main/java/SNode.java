@@ -21,4 +21,7 @@ public class SNode{
 	public SNode getKid() {
 		return kid;
 	}
+	public SNode getParent(){
+		return parent;
+	}
 }
