@@ -7,7 +7,7 @@ public class LLTable {
     // token.
     
     public LLTable() {
-
+       
     }
 
     // We will have 52 rules...

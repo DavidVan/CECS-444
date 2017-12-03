@@ -340,7 +340,7 @@ public class Parser {
 
 
 //Pat's implementation
-    public void ast2sct(Node arn, SNode rsn){
+    public void ast2sct(Node arn, ScopeNode rsn){
         if(arn == null){
             return;
         }
@@ -381,8 +381,8 @@ public class Parser {
     }
     
     //Create a new scope
-    public void a2sBlock(Node arn, SNode rsnParent){
-        SNode sKid = new SNode(rsnParent);
+    public void a2sBlock(Node arn, ScopeNode rsnParent){
+        ScopeNode sKid = new ScopeNode(rsnParent);
         rsnParent.linkParentToChild(sKid);
         for(Node kid: arn.getChildren()){
             ast2sct(kid, sKid);
@@ -390,7 +390,7 @@ public class Parser {
     }
 
     //If it's a decl then add to the entry
-    public void astUse(Node arn, SNode rsn){
+    public void astUse(Node arn, ScopeNode rsn){
         Map<String, Node> sMap = rsn.getSCTMap();
         try{
             String tokenName = arn.getToken().getTokenStringName();
@@ -418,6 +418,31 @@ public class Parser {
             }
         }
     }
+    
+    public void runAST(Node rn) {
+       if (rn == null) {
+          return;
+       }
+       
+       // get the type of the node
+       String typeOfNode = rn.getSymbol().getSymbolName();
+       
+       switch(typeOfNode) {
+          case "equal":
+             
+          default:
+             break;
+       }
+    }
+    
+    // case assignment
+    public void runASTEqual(Node rn) {
+       
+       // TODO: recursive step
+       
+       // TODO: assign variable and create variable slot in SCT
+    }
+}
 //End Pat's implementation
 
-}
+

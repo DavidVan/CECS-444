@@ -1,13 +1,13 @@
 import java.util.*;
 
-public class SNode{
+public class ScopeNode{
 	private Map<String,Node> sctMap;
-	private SNode kid;
-	private SNode parent;
-	public SNode(){
+	private ScopeNode kid;
+	private ScopeNode parent;
+	public ScopeNode(){
 		sctMap = new HashMap<String,Node>();
 	}
-	public SNode(SNode parent){
+	public ScopeNode(ScopeNode parent){
 		sctMap = new HashMap<String,Node>();
 		this.parent = parent;
 	}
@@ -15,13 +15,13 @@ public class SNode{
 	public Map<String, Node> getSCTMap(){
 		return sctMap;
 	}
-	public void linkParentToChild(SNode child){
+	public void linkParentToChild(ScopeNode child){
 		this.kid = child;
 	}
-	public SNode getKid() {
+	public ScopeNode getKid() {
 		return kid;
 	}
-	public SNode getParent(){
+	public ScopeNode getParent(){
 		return parent;
 	}
 }
