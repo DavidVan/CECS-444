@@ -19,7 +19,6 @@ public class main {
         Lexer lexer = new Lexer(test2);
         
         ASTexample ex = new ASTexample();
-        
         Node firstExample = ex.createFirstExample();
 
         Parser parser = new Parser();
