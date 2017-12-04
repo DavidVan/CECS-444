@@ -432,14 +432,14 @@ public class Parser {
           case "id":
               runASTID(rn);
               break;
-        case "equal":
-            runASTEqual(rn);
-            break;
+          case "equal":
+              runASTEqual(rn);
+              break;
           case "int":
               runASTInt(rn);
               break;
           default:
-             break;
+              break;
        }
     }
     
