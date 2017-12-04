@@ -438,6 +438,8 @@ public class Parser {
           case "int":
               runASTInt(rn);
               break;
+          case "kprint":
+              runASTPrint(rn);
           default:
               break;
        }
@@ -481,6 +483,61 @@ public class Parser {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return intFromToken;
+    }
+    
+    public void runASTPrint(Node rn) {
+       
+      try {
+         boolean hasComma;
+         Token rx;
+         // check if comma exists
+         Node comma = rn.getChildren().get(0).getChildren().get(0);
+          
+         if (comma != null && comma.getSymbol().getSymbolName().equals("comma")) {
+            hasComma = true;
+            rx = comma.getChildren().get(0).getToken();
+         }
+         else {
+            hasComma = false;
+            rx = rn.getChildren().get(0).getChildren().get(0).getToken();
+          }
+          
+         do {
+            if (rx.hasInt()) {
+               try {
+                  int intValue = rx.getInt();
+                  System.out.print(intValue);
+               } catch (Exception ex) {
+                  Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+               }
+            }
+            else if (rx.hasFloat()) {
+               try {
+                  float floatValue = rx.getFloat();
+                  System.out.print(floatValue);
+               } catch (Exception ex) {
+                  Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+               }
+            }
+            else {
+               String stringValue = rx.getTokenStringName();
+               System.out.print(stringValue);
+            }
+            
+            // if we are on a comma, check for another comma
+            if (hasComma) {
+               
+               comma = comma.getChildren().get(1);
+               if (comma == null) {
+                  hasComma = false;
+               }
+            }
+         }
+         while(hasComma);
+          
+       } catch (Exception ex) {
+          Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
 }
 //End Pat's implementation

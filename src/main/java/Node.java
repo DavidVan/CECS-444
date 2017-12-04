@@ -5,7 +5,7 @@ public class Node {
 
     private int nodeId;
     private Symbol symbol;
-    private Token getToken;
+    private Token token;
     private List<Node> children;
 
     public Node(int nodeId, Symbol symbol) {
