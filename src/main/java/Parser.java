@@ -436,6 +436,7 @@ public class Parser {
               runASTID(rn);
               break;
           case "int":
+              runASTInt(rn);
               break;
           default:
              break;
@@ -452,6 +453,16 @@ public class Parser {
     }
     
     public Token runASTID(Node rn){
+        Token t = null;
+        try {
+            t = rn.getToken();
+        } catch (Exception ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return t;
+    }
+    
+    public Token runASTInt(Node rn){
         Token t = null;
         try {
             t = rn.getToken();
