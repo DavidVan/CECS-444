@@ -438,6 +438,9 @@ public class Parser {
           case "int":
               runASTInt(rn);
               break;
+          case "float":
+              runASTFloat(rn);
+              break;
           case "kprint":
               runASTPrint(rn);
           default:
@@ -483,6 +486,16 @@ public class Parser {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return intFromToken;
+    }
+    
+    public float runASTFloat(Node rn){
+        float floatFromToken = 0;
+        try {
+            floatFromToken = rn.getToken().getFloat();
+        } catch (Exception ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return floatFromToken;
     }
     
     public void runASTPrint(Node rn) {
