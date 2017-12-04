@@ -4,23 +4,65 @@ class ASTexample {
         Node one = new Node(1, new Symbol(10,"kprog",true));
         Node two = new Node(2, new Symbol(33,"brace1",true));
         Node three = new Node(3, new Symbol(45,"equal",true));
-        Node four = new Node(4, new Symbol(2,"id",true), new Token(1,2,"pi"));
-        Node five = new Node(5, new Symbol(4,"float",true),new Token(1,4,"float",(float)3.14));//Token
+
+        Token t = new Token(1,2,"pi");
+        Symbol s = new Symbol(2,"id",true);
+        s.setToken(t);
+        Node four = new Node(4, s, t);
+        
+        Token t2 = new Token(1,4,"float",(float)3.14);
+        Symbol s2 = new Symbol(4,"float",true);
+        s.setToken(t2);
+        Node five = new Node(5, s2,t2);//Token
+
         Node six = new Node(6, new Symbol(23,"kprint",true));
         Node seven = new Node(7, new Symbol(37,"parens1",true));
-        Node eight = new Node(8, new Symbol(5,"string",true),new Token(5,5,"Input radius> "));
+
+        Token t3 = new Token(5,5,"Input radius> ");
+        Symbol s3 = new Symbol(5,"string",true);
+        s.setToken(t3);
+        Node eight = new Node(8, s3, t3);
+
+
         Node nine = new Node(9,new Symbol(38,"parens2",true));
         Node ten = new Node(10, new Symbol(45,"equal",true));
-        Node eleven = new Node(11, new Symbol(2,"id",true), new Token(1,2,"circum"));
+
+        Token t4 = new Token(1,2,"circum");
+        Symbol s4 = new Symbol(2,"id",true);
+        s.setToken(t4);
+        Node eleven = new Node(11, s4, t4);
+
         Node twelve = new Node(12, new Symbol(41,"aster",true));
-        Node thirteen = new Node(13, new Symbol(3,"int",true), new Token(1,3,"int",(int)2));
+
+        Token t5 = new Token(1,3,"int",(int)2);
+        Symbol s5 = new Symbol(3,"int",true);
+        s.setToken(t5);
+        Node thirteen = new Node(13, s5, t5);
         Node fourteen = new Node(14, new Symbol(41,"aster",true));
-        Node fifteen = new Node(15, new Symbol(2,"id",true), new Token(1,2,"pi"));
-        Node sixteen = new Node(16, new Symbol(2,"id",true), new Token(1,2,"rx"));
+
+        Token t6 = new Token(1,2,"pi");
+        Symbol s6 = new Symbol(2,"id",true);
+        Node fifteen = new Node(15, s6,t6);
+
+        Token t7 = new Token(1,2,"rx");
+        Symbol s7 = new Symbol(2,"id",true);
+        s.setToken(t7);
+        Node sixteen = new Node(16, s7, t7);
+
+
         Node seventeen = new Node(17, new Symbol(23,"kprint",true));
         Node eighteen = new Node(18, new Symbol(37,"parens1",true));
-        Node nineteen = new Node(19, new Symbol(5,"string",true),new Token(5,5,"Circumf = "));
-        Node twenty = new Node(20, new Symbol(2,"id",true), new Token(1,2,"circum"));
+
+        Token t8 = new Token(5,5,"Circumf = ");
+        Symbol s8 =  new Symbol(5,"string",true);
+        s.setToken(t8);
+        Node nineteen = new Node(19, s8, t8);
+
+        Token t9 =  new Token(1,2,"circum");
+        Symbol s9 = new Symbol(2,"id",true);
+        s.setToken(t9);
+        Node twenty = new Node(20, s9, t9);
+
         Node twentyOne = new Node(21,new Symbol(38,"parens2",true));
         Node twentyTwo = new Node(22,new Symbol(39,"brace2",true));
 

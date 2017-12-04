@@ -420,18 +420,18 @@ public class Parser {
         }
     }
     
-    public void runAST(Node rn) {
+    public void runAST(Node rn, ScopeNode sct) {
        List<Node> kids = rn.getChildren();
        for (Node k : kids) {
           try {
-             runASTHelper(k);
-             runAST(k);
+             runASTHelper(k, sct);
+             runAST(k, sct);
           } catch (Exception ex) {
-             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+             //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
           }
        }
     }
-    public void runASTHelper(Node rn) throws Exception {
+    public void runASTHelper(Node rn, ScopeNode sct) throws Exception {
        if (rn == null) {
           return;
        }
@@ -444,7 +444,7 @@ public class Parser {
               runASTID(rn);
               break;
           case "equal":
-              runASTEqual(rn);
+              runASTEqual(rn, sct);
               break;
           case "int":
               runASTInt(rn);
@@ -460,15 +460,15 @@ public class Parser {
     }
     
     // case assignment
-    public void runASTEqual(Node rn) {
+    public void runASTEqual(Node rn, ScopeNode sct) {
         Token t = runASTID(rn.getChildren().get(0));
         Node fact = rn.getChildren().get(1);
         String symName = fact.getSymbol().getSymbolName();
         if(symName.equals("int")){
-
+            t.setInt(runASTInt(rn));
         }
         else if (symName.equals("float")){
-
+            t.setFloat(runASTFloat(rn));
         }
         else{//String
             
@@ -484,27 +484,43 @@ public class Parser {
         try {
             t = rn.getToken();
         } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return t;
     }
     
-    public int runASTInt(Node rn){
-        int intFromToken = 0;
-        try {
-            intFromToken = rn.getToken().getInt();
-        } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+    public Integer runASTInt(Node rn){
+        Integer intFromToken = null;
+        if(rn.getSymbol().getToken()==null){
+            return null;
+        }
+        if(rn.getSymbol().getToken().hasInt()){
+            try {
+                intFromToken = new Integer(rn.getSymbol().getToken().getInt());
+            } catch (Exception ex) {
+                //ex.printStackTrace();
+            }
+        }
+        else{
+            System.out.println("Pat"+rn.getSymbol().getToken());
         }
         return intFromToken;
     }
     
-    public float runASTFloat(Node rn){
-        float floatFromToken = 0;
-        try {
-            floatFromToken = rn.getToken().getFloat();
-        } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+    public Float runASTFloat(Node rn){
+        Float floatFromToken = null;
+        if (rn.getSymbol().getToken()==null) {
+            return null;
+        }
+        if(rn.getSymbol().getToken().hasFloat()){
+            try {
+                floatFromToken = new Float(rn.getSymbol().getToken().getFloat());
+            } catch (Exception ex) {
+                //ex.printStackTrace();
+            }
+        }
+        else{
+            System.out.println("Pat"+rn.getSymbol().getToken());
         }
         return floatFromToken;
     }

@@ -25,7 +25,7 @@ public class main {
         ScopeNode rootSNode = new ScopeNode();
         parser.ast2sct(firstExample,rootSNode);
         printScopeTree(rootSNode, 0);
-        parser.runAST(firstExample);
+        parser.runAST(firstExample, rootSNode);
 
 
         /*
