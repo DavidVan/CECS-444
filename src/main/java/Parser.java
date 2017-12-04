@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Parser {
     
@@ -419,7 +421,7 @@ public class Parser {
         }
     }
     
-    public void runAST(Node rn) {
+    public void runAST(Node rn) throws Exception {
        if (rn == null) {
           return;
        }
@@ -432,6 +434,8 @@ public class Parser {
             break;
           case "id":
               runASTID(rn);
+              break;
+          case "int":
               break;
           default:
              break;
@@ -447,8 +451,14 @@ public class Parser {
        // TODO: assign variable and create variable slot in SCT
     }
     
-    public Token runASTID(Node rn) throws Exception{
-        return rn.getToken();
+    public Token runASTID(Node rn){
+        Token t = null;
+        try {
+            t = rn.getToken();
+        } catch (Exception ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return t;
     }
 }
 //End Pat's implementation
