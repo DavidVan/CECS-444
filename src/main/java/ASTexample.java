@@ -99,6 +99,101 @@ class ASTexample {
         
         return one;
    }
+
+   public Node createSecondExample(){
+
+        Node one = new Node(1, new Symbol(10,"kprog",true));
+        Node two = new Node(2, new Symbol(33,"brace1",true));
+
+        Node three = new Node(3, new Symbol(45,"equal",true));
+
+        Node three2 = new Node(18, new Symbol(34,"brace2",true));
+
+        Token t = new Token(1,2,"x");
+        Symbol s = new Symbol(2,"id",true);
+        s.setToken(t);
+        Node four = new Node(4, s, t);
+
+        Token t2 = new Token(1,3,"int",(int)0);
+        Symbol s2 = new Symbol(3,"int",true);
+        s2.setToken(t2);
+        Node five = new Node(5, s2, t2);
+
+
+        Node six = new Node(6, new Symbol(21,"kwhile",true));
+
+        Node seven = new Node(7, new Symbol(31,"angle1",true));
+
+        Token t3 = new Token(1,2,"x");
+        Symbol s3 = new Symbol(2,"id",true);
+        s3.setToken(t3);
+        Node eight = new Node(8, s3, t3);
+
+        Token t4 = new Token(1,3,"int",(int)3);
+        Symbol s4 = new Symbol(3,"int",true);
+        s4.setToken(t4);
+        Node nine = new Node(9, s4, t4);
+
+        Node ten = new Node(10, new Symbol(33,"brace1",true));
+
+        Node eleven = new Node(11, new Symbol(23,"kprint",true));
+        
+
+        Token t5 = new Token(5,5,"Hi");
+        Symbol s5 = new Symbol(5,"string",true);
+        s5.setToken(t5);
+        Node twelve = new Node(12, s5, t5);
+
+        Node thirteen = new Node(13, new Symbol(45,"equal",true));
+
+        Token t6 = new Token(1,2,"x");
+        Symbol s6 = new Symbol(2,"id",true);
+        s6.setToken(t6);
+        Node fourteen = new Node(14, s6, t6);
+
+        Node fifteen = new Node(15, new Symbol(47,"plus",true));
+
+        Token t7 = new Token(1,2,"x");
+        Symbol s7 = new Symbol(2,"id",true);
+        s7.setToken(t7);
+        Node sixteen = new Node(16, s7, t7);
+
+        Token t8 = new Token(1,3,"int",(int)1);
+        Symbol s8 = new Symbol(3,"int",true);
+        s8.setToken(t8);
+        Node seventeen = new Node(17, s8, t8);
+
+        Node eighteen = new Node(18, new Symbol(34,"brace2",true));
+
+        one.addChild(two);
+
+        two.addChild(three);
+        two.addChild(six);
+        two.addChild(three2);
+
+        three.addChild(four);
+        three.addChild(five);
+
+        six.addChild(seven);
+        six.addChild(ten);
+
+        seven.addChild(eight);
+        seven.addChild(nine);
+
+        ten.addChild(eleven);
+        ten.addChild(thirteen);
+        ten.addChild(eighteen);
+
+        eleven.addChild(twelve);
+
+        thirteen.addChild(fourteen);
+        thirteen.addChild(fifteen);
+
+        fifteen.addChild(sixteen);
+        fifteen.addChild(seventeen);
+
+        return one;
+   }
    
    public Node createOldExample() {
 //      Node one = new Node(1,new Symbol(10,"prog",true));
