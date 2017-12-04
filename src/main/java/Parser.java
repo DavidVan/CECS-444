@@ -420,7 +420,18 @@ public class Parser {
         }
     }
     
-    public void runAST(Node rn) throws Exception {
+    public void runAST(Node rn) {
+       List<Node> kids = rn.getChildren();
+       for (Node k : kids) {
+          try {
+             runASTHelper(k);
+             runAST(k);
+          } catch (Exception ex) {
+             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+          }
+       }
+    }
+    public void runASTHelper(Node rn) throws Exception {
        if (rn == null) {
           return;
        }
