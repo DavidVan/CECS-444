@@ -458,25 +458,63 @@ public class Parser {
               break;
        }
     }
-    
-    // case assignment
+
     public void runASTEqual(Node rn, ScopeNode sct) {
-        Token t = runASTID(rn.getChildren().get(0));
-        Node fact = rn.getChildren().get(1);
-        String symName = fact.getSymbol().getSymbolName();
+          // get symbols and tokens of left and right child for equal
+          Node rx = rn.getChildren().get(1);
+          Node rz = rn.getChildren().get(0);
+          Token t = rz.getSymbol().getToken();
+          Token v = rx.getSymbol().getToken();
+
+        String symName = rx.getSymbol().getSymbolName();
+        String type;
+        
+        // check if the symbol is an int
         if(symName.equals("int")){
-            t.setInt(runASTInt(rn));
+           type = "int";
+           setSCTvalue(symName, t,v, type, sct);
         }
+        
+        // check if the symbol is a float
         else if (symName.equals("float")){
-            t.setFloat(runASTFloat(rn));
+           type = "float";
+           setSCTvalue(symName, t,v, type, sct);
         }
-        else{//String
-            
+        
+        // else its a string
+        else{
+           type = "string";
+           setSCTvalue(symName, t,v, type, sct);
         }
-       // TODO: recursive step
-       
-       
-       // TODO: assign variable and create variable slot in SCT
+    }
+    
+    public void setSCTvalue(String entry, Token t, Token v, String type, ScopeNode sct) {
+
+       while(sct != null) {
+          if (sct.getSCTMap().containsKey(entry)) {
+
+             if (type.equals("int")) {
+                try {
+                   // if its int put int object inside
+                   sct.getValMap().put(t.getTokenStringName(), v.getInt());
+                } catch (Exception ex) {
+
+                }
+             }
+             else if (type.equals("float")) {
+                System.out.println("ENTERED FLOAT");
+                try {
+                  sct.getValMap().put(t.getTokenStringName(), v.getFloat());
+                } catch (Exception ex) {
+
+                }
+             }
+             else {
+                sct.getValMap().put(t.getTokenStringName(), v.getTokenStringName());
+             }
+          }
+          sct = sct.getKid();
+       }
     }
     
     public Token runASTID(Node rn){
@@ -484,12 +522,11 @@ public class Parser {
         try {
             t = rn.getToken();
         } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
         }
         return t;
     }
     
-<<<<<<< HEAD
     public Integer runASTInt(Node rn){
         Integer intFromToken = null;
         if(rn.getSymbol().getToken()==null){
@@ -499,24 +536,15 @@ public class Parser {
             try {
                 intFromToken = new Integer(rn.getSymbol().getToken().getInt());
             } catch (Exception ex) {
-                //ex.printStackTrace();
+
             }
         }
         else{
             System.out.println("Pat"+rn.getSymbol().getToken());
-=======
-    public int runASTInt(Node rn){
-        int intFromToken = 0;
-        try {
-            intFromToken = rn.getToken().getInt();
-        } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 12e8b58240d6d0697edb4c58b01f7bd9906981c2
         }
         return intFromToken;
     }
-    
-<<<<<<< HEAD
+
     public Float runASTFloat(Node rn){
         Float floatFromToken = null;
         if (rn.getSymbol().getToken()==null) {
@@ -526,19 +554,11 @@ public class Parser {
             try {
                 floatFromToken = new Float(rn.getSymbol().getToken().getFloat());
             } catch (Exception ex) {
-                //ex.printStackTrace();
+
             }
         }
         else{
             System.out.println("Pat"+rn.getSymbol().getToken());
-=======
-    public float runASTFloat(Node rn){
-        float floatFromToken = 0;
-        try {
-            floatFromToken = rn.getToken().getFloat();
-        } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 12e8b58240d6d0697edb4c58b01f7bd9906981c2
         }
         return floatFromToken;
     }
@@ -564,22 +584,22 @@ public class Parser {
             if (rx.hasInt()) {
                try {
                   int intValue = rx.getInt();
-                  System.out.print(intValue);
+                  System.out.println(intValue);
                } catch (Exception ex) {
-                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
                }
             }
             else if (rx.hasFloat()) {
                try {
                   float floatValue = rx.getFloat();
-                  System.out.print(floatValue);
+                  System.out.println(floatValue);
                } catch (Exception ex) {
-                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
                }
             }
             else {
                String stringValue = rx.getTokenStringName();
-               System.out.print(stringValue);
+               System.out.println(stringValue);
             }
             
             // if we are on a comma, check for another comma
@@ -594,10 +614,9 @@ public class Parser {
          while(hasComma);
           
        } catch (Exception ex) {
-          //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
        }
     }
 }
-//End Pat's implementation
 
 
