@@ -427,7 +427,7 @@ public class Parser {
              runASTHelper(k);
              runAST(k);
           } catch (Exception ex) {
-             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+             //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
           }
        }
     }
@@ -484,7 +484,7 @@ public class Parser {
         try {
             t = rn.getToken();
         } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return t;
     }
@@ -494,7 +494,7 @@ public class Parser {
         try {
             intFromToken = rn.getToken().getInt();
         } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return intFromToken;
     }
@@ -504,7 +504,7 @@ public class Parser {
         try {
             floatFromToken = rn.getToken().getFloat();
         } catch (Exception ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return floatFromToken;
     }
@@ -532,7 +532,7 @@ public class Parser {
                   int intValue = rx.getInt();
                   System.out.print(intValue);
                } catch (Exception ex) {
-                  Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
                }
             }
             else if (rx.hasFloat()) {
@@ -540,7 +540,7 @@ public class Parser {
                   float floatValue = rx.getFloat();
                   System.out.print(floatValue);
                } catch (Exception ex) {
-                  Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
                }
             }
             else {
@@ -560,7 +560,7 @@ public class Parser {
          while(hasComma);
           
        } catch (Exception ex) {
-          Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+          //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
        }
     }
 }
