@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Parser {
 
@@ -358,8 +360,9 @@ public class Parser {
         }
     }
 
-    //Pat's implementation
-    public void ast2sct(Node arn, SNode rsn){
+
+//Pat's implementation
+    public void ast2sct(Node arn, ScopeNode rsn){
         if(arn == null){
             return;
         }
@@ -390,7 +393,6 @@ public class Parser {
 
     //Check if the AST current symbol is an ID type
     public boolean isUse(Node arn){
-
         String st = arn.getSymbol().getSymbolName();
         if(st.equals("id"))
             return true;
@@ -400,8 +402,8 @@ public class Parser {
     }
 
     //Create a new scope
-    public void a2sBlock(Node arn, SNode rsnParent){
-        SNode sKid = new SNode(rsnParent);
+    public void a2sBlock(Node arn, ScopeNode rsnParent){
+        ScopeNode sKid = new ScopeNode(rsnParent);
         rsnParent.linkParentToChild(sKid);
         for(Node kid: arn.getChildren()){
             ast2sct(kid, sKid);
@@ -409,7 +411,7 @@ public class Parser {
     }
 
     //If it's a decl then add to the entry
-    public void astUse(Node arn, SNode rsn){
+    public void astUse(Node arn, ScopeNode rsn){
         Map<String, Node> sMap = rsn.getSCTMap();
         try{
             String tokenName = arn.getToken().getTokenStringName();
@@ -437,6 +439,204 @@ public class Parser {
             }
         }
     }
-    //End Pat's implementation
+    
+    public void runAST(Node rn, ScopeNode sct) {
+       List<Node> kids = rn.getChildren();
+       for (Node k : kids) {
+          try {
+             runASTHelper(k, sct);
+             runAST(k, sct);
+          } catch (Exception ex) {
+             //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+          }
+       }
+    }
+    public void runASTHelper(Node rn, ScopeNode sct) throws Exception {
+       if (rn == null) {
+          return;
+       }
+       
+       // get the type of the node
+       String typeOfNode = rn.getSymbol().getSymbolName();
+       
+       switch(typeOfNode) {
+          case "id":
+              runASTID(rn);
+              break;
+          case "equal":
+              runASTEqual(rn, sct);
+              break;
+          case "int":
+              runASTInt(rn);
+              break;
+          case "float":
+              runASTFloat(rn);
+              break;
+          case "kprint":
+              runASTPrint(rn);
+          default:
+              break;
+       }
+    }
 
+    public void runASTEqual(Node rn, ScopeNode sct) {
+          // get symbols and tokens of left and right child for equal
+          Node rx = rn.getChildren().get(1);
+          Node rz = rn.getChildren().get(0);
+          Token t = rz.getSymbol().getToken();
+          Token v = rx.getSymbol().getToken();
+
+        String symName = rx.getSymbol().getSymbolName();
+        String type;
+        
+        // check if the symbol is an int
+        if(symName.equals("int")){
+           type = "int";
+           setSCTvalue(symName, t,v, type, sct);
+        }
+        
+        // check if the symbol is a float
+        else if (symName.equals("float")){
+           type = "float";
+           setSCTvalue(symName, t,v, type, sct);
+        }
+        
+        // else its a string
+        else{
+           type = "string";
+           setSCTvalue(symName, t,v, type, sct);
+        }
+    }
+    
+    public void setSCTvalue(String entry, Token t, Token v, String type, ScopeNode sct) {
+
+       while(sct != null) {
+          if (sct.getSCTMap().containsKey(entry)) {
+
+             if (type.equals("int")) {
+                try {
+                   // if its int put int object inside
+                   sct.getValMap().put(t.getTokenStringName(), v.getInt());
+                } catch (Exception ex) {
+
+                }
+             }
+             else if (type.equals("float")) {
+                System.out.println("ENTERED FLOAT");
+                try {
+                  sct.getValMap().put(t.getTokenStringName(), v.getFloat());
+                } catch (Exception ex) {
+
+                }
+             }
+             else {
+                sct.getValMap().put(t.getTokenStringName(), v.getTokenStringName());
+             }
+          }
+          sct = sct.getKid();
+       }
+    }
+    
+    public Token runASTID(Node rn){
+        Token t = null;
+        try {
+            t = rn.getToken();
+        } catch (Exception ex) {
+
+        }
+        return t;
+    }
+    
+    public Integer runASTInt(Node rn){
+        Integer intFromToken = null;
+        if(rn.getSymbol().getToken()==null){
+            return null;
+        }
+        if(rn.getSymbol().getToken().hasInt()){
+            try {
+                intFromToken = new Integer(rn.getSymbol().getToken().getInt());
+            } catch (Exception ex) {
+
+            }
+        }
+        else{
+            System.out.println("Pat"+rn.getSymbol().getToken());
+        }
+        return intFromToken;
+    }
+
+    public Float runASTFloat(Node rn){
+        Float floatFromToken = null;
+        if (rn.getSymbol().getToken()==null) {
+            return null;
+        }
+        if(rn.getSymbol().getToken().hasFloat()){
+            try {
+                floatFromToken = new Float(rn.getSymbol().getToken().getFloat());
+            } catch (Exception ex) {
+
+            }
+        }
+        else{
+            System.out.println("Pat"+rn.getSymbol().getToken());
+        }
+        return floatFromToken;
+    }
+    
+    public void runASTPrint(Node rn) {
+       
+      try {
+         boolean hasComma;
+         Token rx;
+         // check if comma exists
+         Node comma = rn.getChildren().get(0).getChildren().get(0);
+          
+         if (comma != null && comma.getSymbol().getSymbolName().equals("comma")) {
+            hasComma = true;
+            rx = comma.getChildren().get(0).getToken();
+         }
+         else {
+            hasComma = false;
+            rx = rn.getChildren().get(0).getChildren().get(0).getToken();
+          }
+          
+         do {
+            if (rx.hasInt()) {
+               try {
+                  int intValue = rx.getInt();
+                  System.out.println(intValue);
+               } catch (Exception ex) {
+
+               }
+            }
+            else if (rx.hasFloat()) {
+               try {
+                  float floatValue = rx.getFloat();
+                  System.out.println(floatValue);
+               } catch (Exception ex) {
+
+               }
+            }
+            else {
+               String stringValue = rx.getTokenStringName();
+               System.out.println(stringValue);
+            }
+            
+            // if we are on a comma, check for another comma
+            if (hasComma) {
+               
+               comma = comma.getChildren().get(1);
+               if (comma == null) {
+                  hasComma = false;
+               }
+            }
+         }
+         while(hasComma);
+          
+       } catch (Exception ex) {
+
+       }
+    }
 }
+
+
