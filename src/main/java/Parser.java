@@ -473,14 +473,14 @@ public class Parser {
         return t;
     }
     
-    public Token runASTInt(Node rn){
-        Token t = null;
+    public int runASTInt(Node rn){
+        int intFromToken = 0;
         try {
-            t = rn.getToken();
+            intFromToken = rn.getToken().getInt();
         } catch (Exception ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return t;
+        return intFromToken;
     }
 }
 //End Pat's implementation
