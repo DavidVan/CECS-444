@@ -70,7 +70,6 @@ public class Token {
         this.floatIsSet = false;
     }
 
-//Pat's constructor
     public Token(int lineNumber, int tokenId, String tokenName, float f) {
         this.lineNumber = lineNumber;
         this.tokenId = tokenId;
@@ -87,7 +86,6 @@ public class Token {
         this.floatIsSet = false;
         this.mInteger = i;
     }
-//End Pat's constructor
     
     public boolean hasInt() {
         return this.integerIsSet;

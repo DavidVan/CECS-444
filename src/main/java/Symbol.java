@@ -5,7 +5,7 @@ public class Symbol {
     private int symbolId;
     private String symbolName;
     private boolean isTerminal;
-    private Token token; // A symbol can reference a token.
+    private Token token; 
 
     public Symbol(int symbolId, String symbolName, boolean isTerminal) {
         this.symbolId = symbolId;

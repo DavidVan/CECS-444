@@ -431,9 +431,9 @@ public class Parser {
           }
        }
     }
-    public void runASTHelper(Node rn, ScopeNode sct) throws Exception {
+    public Object runASTHelper(Node rn, ScopeNode sct) throws Exception {
        if (rn == null) {
-          return;
+          return null;
        }
        
        // get the type of the node
@@ -441,44 +441,85 @@ public class Parser {
        
        switch(typeOfNode) {
           case "id":
-              runASTID(rn);
-              break;
+              return runASTID(rn);
+              //break;
           case "equal":
               runASTEqual(rn, sct);
               break;
           case "int":
-              runASTInt(rn);
-              break;
+              return runASTInt(rn);
+              //break;
           case "float":
-              runASTFloat(rn);
-              break;
+              return runASTFloat(rn);
+              //break;
           case "kprint":
               runASTPrint(rn);
+              break;
           case "while":
-              runASTWhile(rn);
+              runASTWhile(rn, sct);
+              break;
           default:
               break;
        }
+       return null;
+    }
+
+    public void runASTEqual(Node rn, ScopeNode sct) {
+          // get symbols and tokens of left and right child for equal
+          Node rx = rn.getChildren().get(1);
+          Node rz = rn.getChildren().get(0);
+          Token t = rz.getSymbol().getToken();
+          Token v = rx.getSymbol().getToken();
+
+        String symName = rx.getSymbol().getSymbolName();
+        String type;
+        
+        // check if the symbol is an int
+        if(symName.equals("int")){
+           type = "int";
+           setSCTvalue(symName, t,v, type, sct);
+        }
+        
+        // check if the symbol is a float
+        else if (symName.equals("float")){
+           type = "float";
+           setSCTvalue(symName, t,v, type, sct);
+        }
+        
+        // else its a string
+        else{
+           type = "string";
+           setSCTvalue(symName, t,v, type, sct);
+        }
     }
     
-    // case assignment
-    public void runASTEqual(Node rn, ScopeNode sct) {
-        Token t = runASTID(rn.getChildren().get(0));
-        Node fact = rn.getChildren().get(1);
-        String symName = fact.getSymbol().getSymbolName();
-        if(symName.equals("int")){
-            t.setInt(runASTInt(rn));
-        }
-        else if (symName.equals("float")){
-            t.setFloat(runASTFloat(rn));
-        }
-        else{//String
-            
-        }
-       // TODO: recursive step
-       
-       
-       // TODO: assign variable and create variable slot in SCT
+    public void setSCTvalue(String entry, Token t, Token v, String type, ScopeNode sct) {
+
+       while(sct != null) {
+          if (sct.getSCTMap().containsKey(entry)) {
+
+             if (type.equals("int")) {
+                try {
+                   // if its int put int object inside
+                   sct.getValMap().put(t.getTokenStringName(), v.getInt());
+                } catch (Exception ex) {
+
+                }
+             }
+             else if (type.equals("float")) {
+                System.out.println("ENTERED FLOAT");
+                try {
+                  sct.getValMap().put(t.getTokenStringName(), v.getFloat());
+                } catch (Exception ex) {
+
+                }
+             }
+             else {
+                sct.getValMap().put(t.getTokenStringName(), v.getTokenStringName());
+             }
+          }
+          sct = sct.getKid();
+       }
     }
     
     public Token runASTID(Node rn){
@@ -486,7 +527,7 @@ public class Parser {
         try {
             t = rn.getToken();
         } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
         }
         return t;
     }
@@ -500,7 +541,7 @@ public class Parser {
             try {
                 intFromToken = new Integer(rn.getSymbol().getToken().getInt());
             } catch (Exception ex) {
-                //ex.printStackTrace();
+
             }
         }
         else{
@@ -508,7 +549,7 @@ public class Parser {
         }
         return intFromToken;
     }
-    
+
     public Float runASTFloat(Node rn){
         Float floatFromToken = null;
         if (rn.getSymbol().getToken()==null) {
@@ -518,7 +559,7 @@ public class Parser {
             try {
                 floatFromToken = new Float(rn.getSymbol().getToken().getFloat());
             } catch (Exception ex) {
-                //ex.printStackTrace();
+
             }
         }
         else{
@@ -548,22 +589,22 @@ public class Parser {
             if (rx.hasInt()) {
                try {
                   int intValue = rx.getInt();
-                  System.out.print(intValue);
+                  System.out.println(intValue);
                } catch (Exception ex) {
-                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
                }
             }
             else if (rx.hasFloat()) {
                try {
                   float floatValue = rx.getFloat();
-                  System.out.print(floatValue);
+                  System.out.println(floatValue);
                } catch (Exception ex) {
-                  //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
                }
             }
             else {
                String stringValue = rx.getTokenStringName();
-               System.out.print(stringValue);
+               System.out.println(stringValue);
             }
             
             // if we are on a comma, check for another comma
@@ -578,36 +619,82 @@ public class Parser {
          while(hasComma);
           
        } catch (Exception ex) {
-          //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+
        }
     }
     
-    public void runASTWhile(Node rn){
-        boolean condition = runConditional(rn.getChildren().get(0));
+    public void runASTWhile(Node rn, ScopeNode sct){
+        boolean condition = runConditional(rn.getChildren().get(0), sct);
         if(condition){
             isBlock(rn.getChildren().get(1));
         }
     }
     
-    public boolean runConditional(Node rn){
+    public boolean runConditional(Node rn, ScopeNode sct){
         if(rn.getSymbol().getSymbolName().equals("<")){
-            return runASTChild1(rn);
+            try {
+                return runASTChild1(rn, sct);
+            } catch (Exception ex) {
+            }
         }
         else if(rn.getSymbol().getSymbolName().equals(">")){
-            return runASTChild2(rn);
+            try {
+                return runASTAngle2(rn, sct);
+            } catch (Exception ex) {
+            }
         }
         else if(rn.getSymbol().getSymbolName().equals("==")){
-            return runASTDoubleEqual(rn);
+            return runASTDoubleEqual(rn, sct);
         }
-        else{
-            return false;
-        }
+        return false;
     }
     
-    public boolean runASTChild1(Node rn){
-        return runASTChild(rn.getChildren().get(0));
+    public boolean runASTChild1(Node rn, ScopeNode sct) throws Exception{
+        try {
+            Object child1 = runASTHelper(rn.getChildren().get(0), sct); 
+            Object child2 = runASTHelper(rn.getChildren().get(1), sct);
+            
+            if(child1 instanceof Integer){
+                return (Integer) child1 < (Integer) child2;
+            }
+            else if(child1 instanceof Float){
+                return (Float) child1 < (Float) child2;
+            }
+        } catch (Exception ex) {
+        }
+        return false;
+    }
+    public boolean runASTAngle2(Node rn, ScopeNode sct) throws Exception{
+        try {
+            Object child1 = runASTHelper(rn.getChildren().get(0), sct); 
+            Object child2 = runASTHelper(rn.getChildren().get(1), sct);
+            
+            if(child1 instanceof Integer){
+                return (Integer) child1 > (Integer) child2;
+            }
+            else if(child1 instanceof Float){
+                return (Float) child1 > (Float) child2;
+            }
+        } catch (Exception ex) {
+        }
+        return false;
+    }
+    public boolean runASTDoubleEqual(Node rn, ScopeNode sct){
+        try {
+            Object child1 = runASTHelper(rn.getChildren().get(0), sct); 
+            Object child2 = runASTHelper(rn.getChildren().get(1), sct);
+            
+            if(child1 instanceof Integer){
+                return (Integer) child1 == (Integer) child2;
+            }
+            else if(child1 instanceof Float){
+                return (Float) child1 == (Float) child2;
+            }
+            
+        } catch (Exception ex) {
+        }
+        return false;
     }
 }
-//End Pat's implementation
 
 

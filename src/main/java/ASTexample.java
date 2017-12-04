@@ -12,7 +12,7 @@ class ASTexample {
         
         Token t2 = new Token(1,4,"float",(float)3.14);
         Symbol s2 = new Symbol(4,"float",true);
-        s.setToken(t2);
+        s2.setToken(t2);
         Node five = new Node(5, s2,t2);//Token
 
         Node six = new Node(6, new Symbol(23,"kprint",true));
@@ -20,7 +20,7 @@ class ASTexample {
 
         Token t3 = new Token(5,5,"Input radius> ");
         Symbol s3 = new Symbol(5,"string",true);
-        s.setToken(t3);
+        s3.setToken(t3);
         Node eight = new Node(8, s3, t3);
 
 
@@ -29,14 +29,14 @@ class ASTexample {
 
         Token t4 = new Token(1,2,"circum");
         Symbol s4 = new Symbol(2,"id",true);
-        s.setToken(t4);
+        s4.setToken(t4);
         Node eleven = new Node(11, s4, t4);
 
         Node twelve = new Node(12, new Symbol(41,"aster",true));
 
         Token t5 = new Token(1,3,"int",(int)2);
         Symbol s5 = new Symbol(3,"int",true);
-        s.setToken(t5);
+        s5.setToken(t5);
         Node thirteen = new Node(13, s5, t5);
         Node fourteen = new Node(14, new Symbol(41,"aster",true));
 
@@ -44,9 +44,9 @@ class ASTexample {
         Symbol s6 = new Symbol(2,"id",true);
         Node fifteen = new Node(15, s6,t6);
 
-        Token t7 = new Token(1,2,"rx");
+        Token t7 = new Token(1,2,"pi");
         Symbol s7 = new Symbol(2,"id",true);
-        s.setToken(t7);
+        s7.setToken(t7);
         Node sixteen = new Node(16, s7, t7);
 
 
@@ -55,12 +55,12 @@ class ASTexample {
 
         Token t8 = new Token(5,5,"Circumf = ");
         Symbol s8 =  new Symbol(5,"string",true);
-        s.setToken(t8);
+        s8.setToken(t8);
         Node nineteen = new Node(19, s8, t8);
 
         Token t9 =  new Token(1,2,"circum");
         Symbol s9 = new Symbol(2,"id",true);
-        s.setToken(t9);
+        s9.setToken(t9);
         Node twenty = new Node(20, s9, t9);
 
         Node twentyOne = new Node(21,new Symbol(38,"parens2",true));
