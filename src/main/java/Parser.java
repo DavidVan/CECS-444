@@ -371,7 +371,6 @@ public class Parser {
 
     //Check if the AST current symbol is an ID type
     public boolean isUse(Node arn){
-
         String st = arn.getSymbol().getSymbolName();
         if(st.equals("id"))
             return true;
@@ -419,7 +418,7 @@ public class Parser {
         }
     }
     
-    public void runAST(Node rn) {
+    public void runAST(Node rn, ScopeNode sct) {
        if (rn == null) {
           return;
        }
@@ -433,6 +432,11 @@ public class Parser {
           case "id":
               runASTID(rn);
               break;
+        case "equal":
+            runASTEqual(rn, sct);
+            break;
+        case "id":
+            break;
           default:
              break;
        }
@@ -440,7 +444,18 @@ public class Parser {
     
     // case assignment
     public void runASTEqual(Node rn) {
-       
+        Token t = runASTID(n.getChildren().get(0));
+        Node fact = n.getChildren().get(1);
+        String symName = fact.getSymbol().getSymbolName();
+        if(symName.equals("int")){
+
+        }
+        else if (symName.equals("float")){
+
+        }
+        else{//String
+            
+        }
        // TODO: recursive step
        
        
@@ -450,6 +465,7 @@ public class Parser {
     public Token runASTID(Node rn) throws Exception{
         return rn.getToken();
     }
+
 }
 //End Pat's implementation
 
