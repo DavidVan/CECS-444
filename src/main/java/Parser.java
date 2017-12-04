@@ -429,15 +429,11 @@ public class Parser {
        String typeOfNode = rn.getSymbol().getSymbolName();
        
        switch(typeOfNode) {
-          case "equal":
-            break;
           case "id":
               runASTID(rn);
               break;
         case "equal":
-            runASTEqual(rn, sct);
-            break;
-        case "id":
+            runASTEqual(rn);
             break;
           case "int":
               runASTInt(rn);
@@ -449,8 +445,8 @@ public class Parser {
     
     // case assignment
     public void runASTEqual(Node rn) {
-        Token t = runASTID(n.getChildren().get(0));
-        Node fact = n.getChildren().get(1);
+        Token t = runASTID(rn.getChildren().get(0));
+        Node fact = rn.getChildren().get(1);
         String symName = fact.getSymbol().getSymbolName();
         if(symName.equals("int")){
 
@@ -476,7 +472,6 @@ public class Parser {
         }
         return t;
     }
-<<<<<<< HEAD
     
     public Token runASTInt(Node rn){
         Token t = null;
@@ -487,9 +482,6 @@ public class Parser {
         }
         return t;
     }
-=======
-
->>>>>>> 0b2c4d012b601822107c6ced24f061a337cb51c3
 }
 //End Pat's implementation
 
