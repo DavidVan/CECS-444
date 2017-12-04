@@ -454,6 +454,8 @@ public class Parser {
               break;
           case "kprint":
               runASTPrint(rn);
+          case "while":
+              runASTWhile(rn);
           default:
               break;
        }
@@ -489,7 +491,6 @@ public class Parser {
         return t;
     }
     
-<<<<<<< HEAD
     public Integer runASTInt(Node rn){
         Integer intFromToken = null;
         if(rn.getSymbol().getToken()==null){
@@ -504,19 +505,10 @@ public class Parser {
         }
         else{
             System.out.println("Pat"+rn.getSymbol().getToken());
-=======
-    public int runASTInt(Node rn){
-        int intFromToken = 0;
-        try {
-            intFromToken = rn.getToken().getInt();
-        } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 12e8b58240d6d0697edb4c58b01f7bd9906981c2
         }
         return intFromToken;
     }
     
-<<<<<<< HEAD
     public Float runASTFloat(Node rn){
         Float floatFromToken = null;
         if (rn.getSymbol().getToken()==null) {
@@ -531,14 +523,6 @@ public class Parser {
         }
         else{
             System.out.println("Pat"+rn.getSymbol().getToken());
-=======
-    public float runASTFloat(Node rn){
-        float floatFromToken = 0;
-        try {
-            floatFromToken = rn.getToken().getFloat();
-        } catch (Exception ex) {
-            //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> 12e8b58240d6d0697edb4c58b01f7bd9906981c2
         }
         return floatFromToken;
     }
@@ -596,6 +580,32 @@ public class Parser {
        } catch (Exception ex) {
           //Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
        }
+    }
+    
+    public void runASTWhile(Node rn){
+        boolean condition = runConditional(rn.getChildren().get(0));
+        if(condition){
+            isBlock(rn.getChildren().get(1));
+        }
+    }
+    
+    public boolean runConditional(Node rn){
+        if(rn.getSymbol().getSymbolName().equals("<")){
+            return runASTChild1(rn);
+        }
+        else if(rn.getSymbol().getSymbolName().equals(">")){
+            return runASTChild2(rn);
+        }
+        else if(rn.getSymbol().getSymbolName().equals("==")){
+            return runASTDoubleEqual(rn);
+        }
+        else{
+            return false;
+        }
+    }
+    
+    public boolean runASTChild1(Node rn){
+        return runASTChild(rn.getChildren().get(0));
     }
 }
 //End Pat's implementation
