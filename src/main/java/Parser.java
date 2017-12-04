@@ -429,7 +429,10 @@ public class Parser {
        
        switch(typeOfNode) {
           case "equal":
-             
+            break;
+          case "id":
+              runASTID(rn);
+              break;
           default:
              break;
        }
@@ -440,7 +443,12 @@ public class Parser {
        
        // TODO: recursive step
        
+       
        // TODO: assign variable and create variable slot in SCT
+    }
+    
+    public Token runASTID(Node rn) throws Exception{
+        return rn.getToken();
     }
 }
 //End Pat's implementation
