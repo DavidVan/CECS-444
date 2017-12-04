@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Parser {
-    
+
     private LLTable table = new LLTable();
     private List<Token> tokens;
 
@@ -84,262 +84,281 @@ public class Parser {
         return tree;
     }
 
-    public Node parseToAST(Node parseTree, Node parent) {
-        Node fixedNode = simplifyNode(parseTree, parent); // Fix the node
-        List<Node> children = fixedNode.getChildren();
-        if (children.size() == 0) {
-            return fixedNode;
-        }
-        List<Node> newChildren = new ArrayList<>();
-        for (int i = 0; i < children.size(); i++) {
-            Node c = children.get(i);
-            if (c != fixedNode) {
-                if (c.getSymbol().getSymbolName().equals("Rterm")) {
-                    System.out.println("ENCOUNTERED RTERM NODE..." + c);
-                }
-                System.out.println("Processing: " + c);
-                Node fixedChildNode = parseToAST(c, fixedNode);
-                newChildren.add(fixedChildNode);
-                System.out.println("Fixed Node: " + fixedChildNode);
-            }
-        }
-        children.clear(); // Clear old children list...
-        for (Node nC : newChildren) {
-            children.add(nC); // Add new children...
-        }
-        return fixedNode;
+    public Node parse2AST(Node parseTree) {
+        return simplifyNode(parseTree);
     }
 
-    private Node simplifyNode(Node n, Node parent) {
+    public Node simplifyNode(Node n) {
         List<Node> children = n.getChildren();
-        if (children.size() != 0) {
+        if (children.size() == 0) {
+            return null;
+        }
+        else {
             String symbolName = n.getSymbol().getSymbolName();
             if (symbolName.equals("Pgm")) {
                 Node kwdprog = n.getChildWithName("kwdprog");
-                Node BBlock = n.getChildWithName("BBlock");
+                Node BBlock = simplifyNode(n.getChildWithName("BBlock"));
                 kwdprog.addChild(BBlock);
                 return kwdprog;
             }
             else if (symbolName.equals("BBlock")) {
                 Node brace1 = n.getChildWithName("brace1");
-                // Node Vargroup = n.getChildWithName(1);
-                Node Stmts = n.getChildWithName("Stmts");
+                Node Vargroup = simplifyNode(n.getChildWithName("Vargroup"));
+                Node Stmts = simplifyNode(n.getChildWithName("Stmts"));
                 Node brace2 = n.getChildWithName("brace2");
-                // brace1.addChild(Vargroup);
-                // Special case for Stmts... We don't replace brace1 with Stmt's childs... We add them as childs of brace1.
-                Node StmtsChildStmt = Stmts.getChildWithName("Stmt"); // Get the Stmt node.
-                // We skip getting the semi node.
-                Node StmtsChildStmts = Stmts.getChildWithName("Stmts"); // Get the Stmts node.
-                brace1.addChild(StmtsChildStmt);
-                brace1.addChild(StmtsChildStmts);
+                if (Vargroup != null) {
+                    brace1.addChild(Vargroup);
+                }
+                brace1.addChild(Stmts);
                 brace1.addChild(brace2);
                 return brace1;
             }
-            else if (symbolName.equals("Stmts")) {
-                Node Stmt = n.getChildWithName("Stmt");
-                // Node semi = n.getChildWithName("semi");
-                Node Stmts = n.getChildWithName("Stmts");
-                // Stmt.addChild(semi);
-                Stmt.addChild(simplifyNode(Stmts, parent));
-                return simplifyNode(Stmt, parent); // TODO: Check this... I don't think we need to simplify here but if we don't get get a dangling Stmt node... If we do simplify, we don't get aster anymore... In fact, we don't get any of the tree past this point...
+            else if (symbolName.equals("Vargroup")) {
+                Node kwdvars = n.getChildWithName("kwdvars");
+                Node PPvarlist = simplifyNode(n.getChildWithName("PPvarlist"));
+                kwdvars.addChild(PPvarlist);
+                return kwdvars;
             }
-            else if (symbolName.equals("Stmt")) {
-                if (children.get(0).getChildren().size() != 0) {
-                    Node childSymbol = simplifyNode(children.get(0), parent); // Stmt only has one child... Stasgn, Stprint, or Stwhile
-                    return childSymbol;
+            else if (symbolName.equals("PPVarlist")) {
+                Node parens1 = n.getChildWithName("parens1");
+                Node Varlist = simplifyNode(n.getChildWithName("Varlist"));
+                Node parens2 = n.getChildWithName("parens2");
+                if (Varlist != null) {
+                    parens1.addChild(Varlist);
                 }
+                parens1.addChild(parens2);
+                return parens1;
             }
-            else if (symbolName.equals("Stasgn")) {
-                Node Varid = n.getChildWithName("Varid");
-                Node equal = n.getChildWithName("equal");
-                Node Expr = n.getChildWithName("Expr");
-                equal.addChild(Varid);
-                equal.addChild(Expr);
-                return equal;
+            else if (symbolName.equals("Varlist")) {
+                Node Vardecl = simplifyNode(n.getChildWithName("Vardecl"));
+                Node semi = n.getChildWithName("semi");
+                Node Varlist = simplifyNode(n.getChildWithName("Varlist"));
+                Vardecl.addChild(semi);
+                if (Varlist != null) {
+                    Vardecl.addChild(Varlist);
+                }
+                return Vardecl;
             }
-            else if (symbolName.equals("Stprint")) {
-                Node kwdprint = n.getChildWithName("kwdprint");
-                Node PPexprs = n.getChildWithName("PPexprs");
-                kwdprint.addChild(PPexprs);
-                return kwdprint;
+            else if (symbolName.equals("Vardecl")) {
+                Node Basekind = simplifyNode(n.getChildWithName("Basekind"));
+                Node Varid = simplifyNode(n.getChildWithName("Varid"));
+                Basekind.addChild(Varid);
+                return Basekind;
             }
-            else if (symbolName.equals("Stwhile")) {
-                Node kwdwhile = n.getChildWithName("kwdwhile");
-                Node PPexprl = n.getChildWithName("PPexprl");
-                Node BBlock = n.getChildWithName("BBlock");
-                kwdwhile.addChild(PPexprl);
-                kwdwhile.addChild(BBlock);
-                return kwdwhile;
+            else if (symbolName.equals("Basekind")) {
+                Node childNode = children.get(0);
+                return childNode;
             }
             else if (symbolName.equals("Varid")) {
                 Node id = n.getChildWithName("id");
                 return id;
             }
-            else if (symbolName.equals("Expr")) {
-                if (n.getChildWithName("Oprel") != null) {
-                    Node Oprel = n.getChildWithName("Oprel");
-                    Node Rterm = n.getChildWithName("Rterm");
-                    Node E = n.getChildWithName("E");
-                    Oprel.addChild(Rterm);
-                    if (E.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(E, parent));
-                    }
-                    return Oprel;
+            else if (symbolName.equals("Stmts")) {
+                Node Stmt = simplifyNode(n.getChildWithName("Stmt"));
+                Node semi = n.getChildWithName("semi");
+                Node Stmts = simplifyNode(n.getChildWithName("Stmts"));
+                if (Stmts != null) {
+                    Stmt.addChild(Stmts);
                 }
-                else {
-                    Node Rterm = n.getChildWithName("Rterm");
-                    Node E = n.getChildWithName("E");
-                    if (E.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(E, parent));
-                    }
-                    return simplifyNode(Rterm, parent);
-                }
+                return Stmt;
             }
-            else if (symbolName.equals("Rterm")) {
-                if (n.getChildWithName("Opadd") != null) {
-                    Node Opadd = n.getChildWithName("Opadd");
-                    Node Term = n.getChildWithName("Term");
-                    Node R = n.getChildWithName("R");
-                    Opadd.addChild(Term);
-                    if (R.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(R, parent));
-                    }
-                    return Opadd;
-                }
-                else {
-                    Node Term = n.getChildWithName("Term");
-                    Node R = n.getChildWithName("R");
-                    if (R.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(R, parent));
-                    }
-                    return simplifyNode(Term, parent);
-                }
+            else if (symbolName.equals("Stmt")) {
+                Node childNode = simplifyNode(children.get(0));
+                return childNode;
             }
-            else if (symbolName.equals("Term")) {
-                if (n.getChildWithName("Opmul") != null) {
-                    Node Opmul = n.getChildWithName("Opmul");
-                    Node Fact = n.getChildWithName("Fact");
-                    Node T = n.getChildWithName("T");
-                    Opmul.addChild(Fact);
-                    if (T.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(T, parent));
-                    }
-                    return Opmul;
-                }
-                else {
-                    Node Fact = n.getChildWithName("Fact");
-                    Node T = n.getChildWithName("T");
-                    if (T.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(T, parent));
-                    }
-                    return simplifyNode(Fact, parent);
-                }
+            else if (symbolName.equals("Stasgn")) {
+                Node Varid = simplifyNode(n.getChildWithName("Varid"));
+                Node equal = n.getChildWithName("equal");
+                Node Expr = simplifyNode(n.getChildWithName("Expr"));
+                equal.addChild(Varid);
+                equal.addChild(Expr);
+                return equal;
             }
-            else if (symbolName.equals("E")) {
-                if (n.getChildWithName("Oprel") != null) {
-                    Node Oprel = n.getChildWithName("Oprel");
-                    Node Rterm = n.getChildWithName("Rterm");
-                    Node E = n.getChildWithName("E");
-                    Oprel.addChild(Rterm);
-                    if (E.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(E, parent));
-                    }
-                    return Oprel;
-                }
-                else {
-                    Node Rterm = n.getChildWithName("Rterm");
-                    Node E = n.getChildWithName("E");
-                    if (E.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(E, parent));
-                    }
-                    return simplifyNode(Rterm, parent);
-                }
+            if (symbolName.equals("Stprint")) {
+                Node kwdprint = n.getChildWithName("kwdprint");
+                Node PPexprs = simplifyNode(n.getChildWithName("PPexprs"));
+                kwdprint.addChild(PPexprs);
+                return kwdprint;
             }
-            else if (symbolName.equals("R")) {
-                if (n.getChildWithName("Opadd") != null) {
-                    Node Opadd = n.getChildWithName("Opadd");
-                    Node Term = n.getChildWithName("Term");
-                    Node R = n.getChildWithName("R");
-                    Opadd.addChild(Term);
-                    if (R.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(R, parent));
-                    }
-                    return Opadd;
-                }
-                else {
-                    Node Term = n.getChildWithName("Term");
-                    Node R = n.getChildWithName("R");
-                    if (R.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(R, parent));
-                    }
-                    return simplifyNode(Term, parent);
-                }
+            else if (symbolName.equals("Stwhile")) {
+                Node kwdwhile = n.getChildWithName("kwdwhile");
+                Node PPexprl = simplifyNode(n.getChildWithName("PPexprl"));
+                Node BBlock = simplifyNode(n.getChildWithName("BBlock"));
+                kwdwhile.addChild(PPexprl);
+                kwdwhile.addChild(BBlock);
+                return kwdwhile;
             }
-            else if (symbolName.equals("T")) {
-                if (n.getChildWithName("Opmul") != null) {
-                    Node Opmul = n.getChildWithName("Opmul");
-                    Node Fact = n.getChildWithName("Fact");
-                    Node T = n.getChildWithName("T");
-                    Opmul.addChild(Fact);
-                    if (T.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(T, parent));
-                    }
-                    return Opmul;
-                }
-                else {
-                    Node Fact = n.getChildWithName("Fact");
-                    Node T = n.getChildWithName("T");
-                    if (T.getChildren().size() != 0) {
-                        parent.addChild(simplifyNode(T, parent));
-                    }
-                    return simplifyNode(Fact, parent);
-                }
-            }
-            else if (symbolName.equals("Fact")) {
-                return children.get(0); // We only have one child for Fact nodes...
+            else if (symbolName.equals("PPexprl")) {
+                Node parens1 = n.getChildWithName("parens1");
+                Node Expr = simplifyNode(n.getChildWithName("Expr"));
+                Node parens2 = n.getChildWithName("parens2");
+                parens1.addChild(Expr);
+                parens1.addChild(parens2);
+                return parens1;
             }
             else if (symbolName.equals("PPexprs")) {
                 Node parens1 = n.getChildWithName("parens1");
-                Node Exprlist = n.getChildWithName("Exprlist");
+                Node Exprlist = simplifyNode(n.getChildWithName("Exprlist"));
                 Node parens2 = n.getChildWithName("parens2");
                 parens1.addChild(Exprlist);
                 parens1.addChild(parens2);
                 return parens1;
             }
             else if (symbolName.equals("Exprlist")) {
-                Node Expr = n.getChildWithName("Expr");
-                Node Moreexprs = n.getChildWithName("Moreexprs");
-                Expr.addChild(simplifyNode(Moreexprs, parent));
-                return simplifyNode(Expr, parent);
+                Node Expr = simplifyNode(n.getChildWithName("Expr"));
+                Node Moreexprs = simplifyNode(n.getChildWithName("Moreexprs"));
+                if (Moreexprs != null) {
+                    Expr.addChild(Moreexprs);
+                }
+                return Expr;
             }
             else if (symbolName.equals("Moreexprs")) {
-                if (n.getChildWithName("comma") != null) {
-                    Node Exprlist = n.getChildWithName("Exprlist");
-                    return Exprlist;
+                Node comma = n.getChildWithName("comma");
+                Node Exprlist = simplifyNode(n.getChildWithName("Exprlist"));
+                comma.addChild(Exprlist);
+                return comma;
+            }
+            else if (symbolName.equals("Expr") || symbolName.equals("E")) {
+                if (n.getChildWithName("Oprel") != null) {
+                    Node Oprel = simplifyNode(n.getChildWithName("Oprel"));
+                    Node Rterm = simplifyNode(n.getChildWithName("Rterm"));
+                    Node E = simplifyNode(n.getChildWithName("E"));
+                    Oprel.addChild(Rterm);
+                    if (E != null) {
+                        //if (E.getChildren().size() > 0) {
+                        //    E.addChild(Rterm);
+                        //    return E;
+                        //}
+                        //else {
+                        //    Oprel.addChild(E);
+                        //}
+                        Oprel.addChild(E);
+                    }
+                    return Oprel;
+                }
+                else {
+                    Node Rterm = simplifyNode(n.getChildWithName("Rterm"));
+                    Node E = simplifyNode(n.getChildWithName("E"));
+                    if (E != null) {
+                        if (E.getChildren().size() > 0) {
+                            E.addChild(Rterm);
+                            return E;
+                        }
+                        else {
+                            Rterm.addChild(E);
+                        }
+                    }
+                    return Rterm;
+                }
+            }
+            else if (symbolName.equals("Rterm") || symbolName.equals("R")) {
+                if (n.getChildWithName("Opadd") != null) {
+                    Node Opadd = simplifyNode(n.getChildWithName("Opadd"));
+                    Node Term = simplifyNode(n.getChildWithName("Term"));
+                    Node R = simplifyNode(n.getChildWithName("R"));
+                    Opadd.addChild(Term);
+                    if (R != null) {
+                        //if (R.getChildren().size() > 0) {
+                        //    R.addChild(Term);
+                        //    return R;
+                        //}
+                        //else {
+                        //    Opadd.addChild(R);
+                        //}
+                        Opadd.addChild(R);
+                    }
+                    return Opadd;
+                }
+                else {
+                    Node Term = simplifyNode(n.getChildWithName("Term"));
+                    Node R = simplifyNode(n.getChildWithName("R"));
+                    if (R != null) {
+                        if (R.getChildren().size() > 0) {
+                            R.addChild(Term);
+                            return R;
+                        }
+                        else {
+                            Term.addChild(R);
+                        }
+                    }
+                    return Term;
+                }
+            }
+            else if (symbolName.equals("Term") || symbolName.equals("T")) {
+                if (n.getChildWithName("Opmul") != null) {
+                    Node Opmul = simplifyNode(n.getChildWithName("Opmul"));
+                    Node Fact = simplifyNode(n.getChildWithName("Fact"));
+                    Node T = simplifyNode(n.getChildWithName("T"));
+                    Opmul.addChild(Fact);
+                    if (T != null) {
+                        //if (T.getChildren().size() > 0) {
+                        //    T.addChild(Fact);
+                        //    return T;
+                        //}
+                        //else {
+                        //    Opmul.addChild(T);
+                        //}
+                        Opmul.addChild(T);
+                    }
+                    return Opmul;
+                }
+                else {
+                    Node Fact = simplifyNode(n.getChildWithName("Fact"));
+                    Node T = simplifyNode(n.getChildWithName("T"));
+                    if (T != null) {
+                        if (T.getChildren().size() > 0) {
+                            T.addChild(Fact);
+                            return T;
+                        }
+                        else {
+                            Fact.addChild(T);
+                        }
+                    }
+                    return Fact;
+                }
+            }
+            else if (symbolName.equals("Fact")) {
+                Node childNode = children.get(0);
+                if (childNode.getSymbol().isTerminal()) {
+                    return childNode;
+                }
+                else {
+                    return simplifyNode(childNode);
+                }
+            }
+            else if (symbolName.equals("Oprel")) {
+                Node childNode = children.get(0);
+                if (childNode.getSymbol().isTerminal()) {
+                    return childNode;
+                }
+                else {
+                    return simplifyNode(childNode);
                 }
             }
             else if (symbolName.equals("Lthan")) {
-                return n.getChildWithName("angle1");
+                Node childNode = children.get(0);
+                return childNode;
             }
             else if (symbolName.equals("Gthan")) {
-                return n.getChildWithName("angle2");
+                Node childNode = children.get(0);
+                return childNode;
             }
             else if (symbolName.equals("Opadd")) {
-                return children.get(0);
+                Node childNode = children.get(0);
+                return childNode;
             }
             else if (symbolName.equals("Opmul")) {
-                return children.get(0);
+                Node childNode = children.get(0);
+                return childNode;
             }
-            else if (symbolName.equals("Oprel")) {
-                return children.get(0);
+            else {
+                System.out.println("Check This: " + n);
+                return n;
             }
         }
-        return n;
     }
 
-
-
-//Pat's implementation
+    //Pat's implementation
     public void ast2sct(Node arn, SNode rsn){
         if(arn == null){
             return;
@@ -379,7 +398,7 @@ public class Parser {
             return false;
 
     }
-    
+
     //Create a new scope
     public void a2sBlock(Node arn, SNode rsnParent){
         SNode sKid = new SNode(rsnParent);
@@ -396,7 +415,7 @@ public class Parser {
             String tokenName = arn.getToken().getTokenStringName();
             while(rsn.getParent()!=null){
                 Map<String, Node> pMap = rsn.getParent().getSCTMap();
-                
+
                 if(pMap.containsKey(tokenName)){
                     //Do
                     pMap.put(tokenName,arn);
@@ -411,13 +430,13 @@ public class Parser {
         }
         catch(Exception e){};
         if (arn.getChildren().size() > 1) {
-        Node rKid = arn.getChildren().get(1);
+            Node rKid = arn.getChildren().get(1);
             if(rKid != null && isUse(rKid)){
 
                 astUse(rKid, rsn);
             }
         }
     }
-//End Pat's implementation
+    //End Pat's implementation
 
 }

@@ -21,6 +21,7 @@ public class main {
         */
         System.out.println(test2);
         Lexer lexer = new Lexer(test2);
+        List<Token> tokens = lexer.processInput();
 
 
 //Pat's AST hard coded tree
@@ -79,7 +80,13 @@ public class main {
         eighteen.addChild(twenty);
 
 
-        Parser parser = new Parser();
+        Parser parser = new Parser(tokens);
+        Node PST = parser.parse();
+        System.out.println("PST:");
+        //printTree(PST);
+        System.out.println("AST:");
+        Node AST = parser.parse2AST(PST);
+        printTree(AST);
         SNode rootSNode = new SNode();
         parser.ast2sct(one,rootSNode);
         printSTree(rootSNode, 0);
